@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+dashboard/node_modules/
+
+# Build output (rebuilt on publish via prepublishOnly)
+dist/
+dashboard/dist/
+build/
+out/
+*.tgz
+
+# PhishGuard per-repo data (created wherever `phishguard` runs)
+.phishguard/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.vscode/
+.idea/
+*.sw?
+.DS_Store
+Thumbs.db
+Desktop.ini

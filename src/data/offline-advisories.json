@@ -1,0 +1,78 @@
+{
+  "_comment": "Fallback advisory set used only when OSV.dev is unreachable or offline mode is on. Not exhaustive - the live OSV query is always preferred. Ranges use npm semver syntax.",
+  "advisories": {
+    "lodash": [
+      { "id": "GHSA-p6mc-m468-83gw", "cve": "CVE-2020-8203", "title": "Prototype pollution in lodash", "severity": "high", "range": "<4.17.19", "fixed": "4.17.19" },
+      { "id": "GHSA-35jh-r3h4-6jhm", "cve": "CVE-2021-23337", "title": "Command injection in lodash template", "severity": "high", "range": "<4.17.21", "fixed": "4.17.21" }
+    ],
+    "minimist": [
+      { "id": "GHSA-vh95-rmgr-6w4m", "cve": "CVE-2020-7598", "title": "Prototype pollution in minimist", "severity": "moderate", "range": "<1.2.3", "fixed": "1.2.3" },
+      { "id": "GHSA-xvch-5gv4-984h", "cve": "CVE-2021-44906", "title": "Prototype pollution in minimist", "severity": "critical", "range": "<1.2.6", "fixed": "1.2.6" }
+    ],
+    "ua-parser-js": [
+      { "id": "GHSA-pjwm-rvh2-c87w", "cve": "CVE-2021-41184", "title": "Malicious code / crypto-miner in compromised ua-parser-js releases", "severity": "critical", "range": ">=0.7.29 <0.7.30 || >=0.8.0 <0.8.1 || >=1.0.0 <1.0.1", "fixed": "0.7.30" }
+    ],
+    "node-ipc": [
+      { "id": "GHSA-97m3-w2cp-4xx6", "cve": "CVE-2022-23812", "title": "node-ipc protestware deletes files for certain geolocations", "severity": "critical", "range": ">=9.2.2 <=11.0.0 || =10.1.1 || =10.1.2", "fixed": "11.1.0" }
+    ],
+    "flat": [
+      { "id": "GHSA-2j2x-2gpw-g8fm", "cve": "CVE-2020-36632", "title": "Prototype pollution in flat", "severity": "critical", "range": "<5.0.1", "fixed": "5.0.1" }
+    ],
+    "node-fetch": [
+      { "id": "GHSA-r683-j2x4-v87g", "cve": "CVE-2022-0235", "title": "node-fetch forwards secure headers to untrusted sites on cross-domain redirect", "severity": "high", "range": "<2.6.7", "fixed": "2.6.7" }
+    ],
+    "axios": [
+      { "id": "GHSA-wf5p-g6vw-rhxx", "cve": "CVE-2023-45857", "title": "axios leaks XSRF-TOKEN via the cross-site request header", "severity": "moderate", "range": "<1.6.0", "fixed": "1.6.0" },
+      { "id": "GHSA-8hc4-vh64-cxmj", "cve": "CVE-2024-39338", "title": "axios SSRF via unexpected absolute URL handling", "severity": "high", "range": ">=1.3.2 <1.7.4", "fixed": "1.7.4" }
+    ],
+    "semver": [
+      { "id": "GHSA-c2qf-rxjj-qqgw", "cve": "CVE-2022-25883", "title": "Regular expression denial of service in semver", "severity": "moderate", "range": "<7.5.2", "fixed": "7.5.2" }
+    ],
+    "ws": [
+      { "id": "GHSA-3h5v-q93c-6h6q", "cve": "CVE-2024-37890", "title": "ws DoS when handling a request with many HTTP headers", "severity": "high", "range": ">=8.0.0 <8.17.1", "fixed": "8.17.1" }
+    ],
+    "json5": [
+      { "id": "GHSA-9c47-m6qq-7p4h", "cve": "CVE-2022-46175", "title": "Prototype pollution in JSON5 via parse", "severity": "high", "range": "<2.2.2", "fixed": "2.2.2" }
+    ],
+    "qs": [
+      { "id": "GHSA-hrpp-h998-j3pp", "cve": "CVE-2022-24999", "title": "qs prototype pollution via bracket notation", "severity": "high", "range": "<6.10.3", "fixed": "6.10.3" }
+    ],
+    "moment": [
+      { "id": "GHSA-8hfj-j24r-96c4", "cve": "CVE-2022-31129", "title": "Inefficient regular expression complexity in moment", "severity": "high", "range": ">=2.18.0 <2.29.4", "fixed": "2.29.4" }
+    ],
+    "tar": [
+      { "id": "GHSA-f5x3-32g6-xq36", "cve": "CVE-2021-37713", "title": "Arbitrary file creation / overwrite via insufficient path sanitization in node-tar", "severity": "high", "range": "<6.1.9", "fixed": "6.1.9" }
+    ],
+    "glob-parent": [
+      { "id": "GHSA-ww39-953v-wcq6", "cve": "CVE-2020-28469", "title": "Regular expression denial of service in glob-parent", "severity": "high", "range": "<5.1.2", "fixed": "5.1.2" }
+    ],
+    "follow-redirects": [
+      { "id": "GHSA-jchw-25xp-jwwc", "cve": "CVE-2024-28849", "title": "follow-redirects leaks Proxy-Authorization header across hosts", "severity": "moderate", "range": "<1.15.6", "fixed": "1.15.6" }
+    ]
+  },
+  "deprecated": {
+    "request": "request has been deprecated, see https://github.com/request/request/issues/3142 - use a maintained client such as axios, got or undici.",
+    "node-sass": "node-sass is deprecated. Migrate to the 'sass' (Dart Sass) package.",
+    "moment": "Moment is in maintenance mode and not recommended for new projects. Consider Luxon, Day.js or date-fns.",
+    "left-pad": "Use String.prototype.padStart instead.",
+    "istanbul": "istanbul is no longer maintained. Use nyc or the built-in coverage of your test runner.",
+    "gulp-util": "gulp-util is deprecated and split into smaller modules.",
+    "core-js@2": "core-js@2 is deprecated. Upgrade to core-js@3.",
+    "babel-preset-es2015": "Deprecated in favour of @babel/preset-env.",
+    "chokidar@2": "chokidar 2 is unmaintained; upgrade to chokidar 3 or 4.",
+    "uuid@3": "uuid 3 is deprecated; upgrade to uuid 9+ for ESM and named exports.",
+    "har-validator": "har-validator is deprecated and no longer maintained.",
+    "querystring": "The core 'querystring' module is legacy; use URLSearchParams.",
+    "urix": "urix is no longer maintained.",
+    "resolve-url": "resolve-url is deprecated; use the WHATWG URL API."
+  },
+  "knownMalicious": [
+    "crypt-miner-helper",
+    "mal-helper-utils",
+    "electron-native-notify",
+    "eslint-scope-bad",
+    "getcookies",
+    "flatmap-stream",
+    "event-stream-bad"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "phishguard",
+  "version": "2.0.0",
+  "description": "Zero-Trust dependency & supply-chain security scanner with a self-hosted SOC dashboard. Install into any repo, scan every dependency against live OSV advisories, and track that repo's security posture over time.",
+  "keywords": [
+    "security",
+    "supply-chain",
+    "sca",
+    "vulnerability-scanner",
+    "osv",
+    "cve",
+    "typosquatting",
+    "dependency-audit",
+    "zero-trust",
+    "soc-dashboard"
+  ],
+  "license": "MIT",
+  "author": "PhishGuard",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./agent": "./agent/index.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "phishguard": "bin/phishguard.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "agent/",
+    "dashboard/dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "scan": "node bin/phishguard.js scan",
+    "dashboard": "node bin/phishguard.js dashboard",
+    "dev:dashboard": "npm --prefix dashboard run dev",
+    "build:dashboard": "npm --prefix dashboard install --no-audit --no-fund && npm --prefix dashboard run build",
+    "prepublishOnly": "npm run build:dashboard"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "semver": "^7.6.0",
+    "sqlite3": "^5.1.7",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

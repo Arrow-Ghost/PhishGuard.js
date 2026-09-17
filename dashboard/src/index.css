@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Scrollbar custom styles for cyber aesthetic */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #080a10;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1f294d;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  }
+
+  body {
+    background-color: #080a10;
+    color: #f1f5f9;
+  }
+}
+
+@layer utilities {
+  /* Elegant Enterprise Panels */
+  .glass-panel {
+    background: #161b26;
+    border: 1px solid #242b3d;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .glass-panel-danger {
+    background: #1d1520;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-panel-success {
+    background: #111e1c;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-panel-active {
+    border-color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+  }
+
+  /* Remove text glow properties */
+  .glow-text-primary {
+    text-shadow: none;
+  }
+
+  .glow-text-danger {
+    text-shadow: none;
+  }
+
+  .glow-text-success {
+    text-shadow: none;
+  }
+
+  .glow-text-warning {
+    text-shadow: none;
+  }
+
+  /* Code-box typing aesthetic */
+  .cli-terminal {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+  }
+}
