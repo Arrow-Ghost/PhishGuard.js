@@ -18,6 +18,7 @@ const { parseLockfile } = require('./lockfile');
 const { queryVulnerabilities } = require('./osv');
 const { queryRegistry } = require('./registry');
 const { checkTyposquat } = require('./typosquat');
+const { mapCodebaseUsage } = require('./codebase');
 const { packageRisk, categoryFor, gradeFor, statusFor, computePosture } = require('./score');
 
 let OFFLINE_MALICIOUS = [];
@@ -63,7 +64,16 @@ async function scanProject(root, opts = {}) {
   const { packages: rawPackages, source: lockSource } = parseLockfile(manifest, lock, {
     includeDev: opts.includeDev !== false,
   });
-  return analyze({ root, manifest, lock, rawPackages, lockSource }, opts);
+
+  let codebaseUsage = null;
+  if (opts.mapCodebase !== false) {
+    progress({ phase: 'codebase', message: 'Scanning source files for dependency usage' });
+    try {
+      codebaseUsage = mapCodebaseUsage(root, new Set(rawPackages.map(p => p.name)));
+    } catch { /* best-effort - never fail the scan over this */ }
+  }
+
+  return analyze({ root, manifest, lock, rawPackages, lockSource, codebaseUsage }, opts);
 }
 
 /**
@@ -80,7 +90,7 @@ async function scanManifest(manifest, opts = {}) {
   return analyze({ root, manifest, lock: null, rawPackages, lockSource }, opts);
 }
 
-async function analyze({ root, manifest, lock, rawPackages, lockSource }, opts = {}) {
+async function analyze({ root, manifest, lock, rawPackages, lockSource, codebaseUsage }, opts = {}) {
   const started = Date.now();
   const offline = !!opts.offline;
   const cacheTtlMs = (opts.cacheTtlHours ?? 24) * 3600 * 1000;
@@ -212,6 +222,8 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource }, opts =
     const risk = packageRisk(findings);
     const category = categoryFor(risk);
 
+    const importedIn = codebaseUsage ? [...(codebaseUsage.usage.get(pkg.name) || [])] : null;
+
     // tally
     if (pkg.direct) counts.direct++; else counts.transitive++;
     if (pkg.dev) counts.dev++;
@@ -246,6 +258,11 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource }, opts =
       deprecated: deprecationMsg,
       typosquat: typo || null,
       malicious: maliciousSet.has(pkg.name),
+      usage: importedIn && {
+        importedIn,
+        fileCount: importedIn.length,
+        referenced: importedIn.length > 0,
+      },
       registry: {
         latest: regEntry.latest || null,
         versionsCount: regEntry.versionsCount ?? null,
@@ -295,6 +312,9 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource }, opts =
       osv: osv.meta,
       registryDegraded: registry.meta.degraded,
     },
+    codebaseScan: codebaseUsage
+      ? { scanned: true, filesScanned: codebaseUsage.filesScanned, truncated: codebaseUsage.truncated }
+      : { scanned: false },
     counts,
     score,
     grade: posture.grade,

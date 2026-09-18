@@ -53,6 +53,9 @@ function printReport(report) {
   console.log('');
   console.log(c(C.bold, `  ${report.project.name} ${c(C.grey, report.project.version || '')}`));
   console.log(c(C.grey, `  ${report.lockfile.source}  •  ${n.total} packages (${n.direct} direct, ${n.transitive} transitive)  •  ${report.durationMs}ms`));
+  if (report.codebaseScan && report.codebaseScan.scanned) {
+    console.log(c(C.grey, `  codebase map: ${report.codebaseScan.filesScanned} source files scanned${report.codebaseScan.truncated ? ' (truncated)' : ''}`));
+  }
   if (report.offline) console.log(c(C.yellow, '  ⚠ offline / degraded data - results may be incomplete'));
   console.log('');
 
@@ -82,7 +85,13 @@ function printReport(report) {
     console.log(c(C.bold, '  Findings'));
     for (const p of shown) {
       const tag = p.direct ? c(C.blue, 'direct') : c(C.grey, `depth ${p.depth}`);
-      console.log(`  ${c(sevColor(p.category === 'critical' ? 'critical' : 'high'), '●')} ${c(C.bold, p.name)}@${p.version || p.range} ${c(C.grey, `(risk ${p.riskScore}, ${tag})`)}`);
+      let usageTag = '';
+      if (p.usage) {
+        usageTag = p.usage.referenced
+          ? c(C.grey, `, used in ${p.usage.fileCount} file${p.usage.fileCount === 1 ? '' : 's'}`)
+          : c(C.yellow, ', not imported anywhere in your source');
+      }
+      console.log(`  ${c(sevColor(p.category === 'critical' ? 'critical' : 'high'), '●')} ${c(C.bold, p.name)}@${p.version || p.range} ${c(C.grey, `(risk ${p.riskScore}, ${tag}`)}${usageTag}${c(C.grey, ')')}`);
       for (const f of p.findings) {
         const fix = f.fixedVersion ? c(C.green, `  → fix: ${f.fixedVersion}`) : '';
         console.log(`      ${c(sevColor(f.severity), f.severity.toUpperCase().padEnd(8))} ${f.identifier ? c(C.cyan, f.identifier + ' ') : ''}${f.title}${fix}`);
@@ -108,6 +117,7 @@ async function cmdScan(flags) {
   const report = await scanProject(root, {
     includeDev: flags.dev === false ? false : config.includeDev,
     offline: flags.offline === true || config.offline,
+    mapCodebase: flags['codebase-map'] !== false,
     cacheTtlHours: config.cacheTtlHours,
     onProgress: (e) => {
       if (!showProgress) return;
@@ -270,6 +280,7 @@ function help() {
     --fail-on <lvl>   Exit 1 when a finding at/above <lvl> exists.
                       lvl = critical | high | moderate | warning | none  (default: critical)
     --no-save         Don't append this scan to .phishguard history.
+    --no-codebase-map Skip scanning your source files for dependency usage.
     --cwd <dir>       Target a different project directory.
 
   ${c(C.bold, 'dashboard options')}
