@@ -555,6 +555,35 @@ export default function ThreatMap() {
               </p>
             </div>
 
+            {selectedNode.type !== 'root' && selectedNode.usage && (
+              <div>
+                <div className="text-[10px] text-cyber-muted uppercase tracking-widest mb-1.5">Codebase Usage</div>
+                <div className={`p-3 rounded-lg border text-[11px] leading-relaxed ${
+                  selectedNode.usage.referenced
+                    ? 'bg-cyber-bg/30 border-cyber-border/20 text-slate-400'
+                    : 'bg-cyber-warning/5 border-cyber-warning/30 text-cyber-warning'
+                }`}>
+                  {selectedNode.usage.referenced ? (
+                    <>
+                      <div className="font-bold text-slate-300 mb-1">
+                        Imported in {selectedNode.usage.fileCount} file{selectedNode.usage.fileCount === 1 ? '' : 's'}
+                      </div>
+                      <ul className="space-y-0.5">
+                        {selectedNode.usage.importedIn.slice(0, 6).map((f, idx) => (
+                          <li key={idx} className="truncate text-slate-500" title={f}>{f}</li>
+                        ))}
+                        {selectedNode.usage.importedIn.length > 6 && (
+                          <li className="text-slate-600">… and {selectedNode.usage.importedIn.length - 6} more</li>
+                        )}
+                      </ul>
+                    </>
+                  ) : (
+                    'Not imported anywhere in your source - installed but unreferenced by any scanned file.'
+                  )}
+                </div>
+              </div>
+            )}
+
             <div>
               <div className="text-[10px] text-cyber-muted uppercase tracking-widest mb-1.5">Security Audit Details</div>
               <div className={`p-3 rounded-lg border text-[11px] leading-relaxed transition-colors ${

@@ -109,6 +109,7 @@ function buildGraph(report, remediated, ignored) {
         ? p.findings.map(f => f.severity).sort((a, b) => severityRank(b) - severityRank(a))[0]
         : null,
       license: p.registry && p.registry.license,
+      usage: p.usage || null,
       author: p.direct ? 'direct dependency' : `transitive (depth ${p.depth})`,
       description: p.findings.length
         ? p.findings.map(f => f.title).join(' • ')
@@ -146,6 +147,7 @@ function classify(report, quarantine) {
         name: p.name, version: p.version, publisher: null,
         score: Math.max(0, 100 - p.riskScore),
         reason: p.findings[0] ? p.findings[0].title : null,
+        usage: p.usage || null,
       };
       if (p.category === 'safe' && !p.deprecated) {
         if (p.direct) trusted.push(entry);

@@ -68,6 +68,17 @@ export default function TrustClassification() {
                   <h4 className="font-mono font-bold text-xs text-slate-100">{pkg.name}</h4>
                   <span className="text-[10px] text-slate-400 font-sans">
                     {pkg.publisher ? `${pkg.publisher} • ` : ''}{pkg.version ? `v${pkg.version}` : ''}
+                    {pkg.usage && (
+                      <span
+                        className={pkg.usage.referenced ? 'text-slate-500' : 'text-cyber-warning'}
+                        title={pkg.usage.referenced ? pkg.usage.importedIn.join(', ') : 'Installed but not imported anywhere in your source'}
+                      >
+                        {' • '}
+                        {pkg.usage.referenced
+                          ? `used in ${pkg.usage.fileCount} file${pkg.usage.fileCount === 1 ? '' : 's'}`
+                          : 'unused in code'}
+                      </span>
+                    )}
                   </span>
                 </div>
               </div>
