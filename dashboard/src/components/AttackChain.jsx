@@ -76,7 +76,7 @@ export default function AttackChain({ triggerType }) {
               key={`base-${i}`}
               d={`M ${src.x + 30} ${src.y} C ${src.x + 80} ${src.y}, ${tgt.x - 80} ${tgt.y}, ${tgt.x - 30} ${tgt.y}`}
               fill="none"
-              stroke="#3A3F48"
+              stroke="#3A3A3C"
               strokeWidth="2"
               strokeDasharray="4 4"
             />
@@ -92,11 +92,11 @@ export default function AttackChain({ triggerType }) {
               <path
                 d={`M ${src.x + 30} ${src.y} C ${src.x + 80} ${src.y}, ${tgt.x - 80} ${tgt.y}, ${tgt.x - 30} ${tgt.y}`}
                 fill="none"
-                stroke={tgt.id === 'blocked' ? '#7FD1A8' : '#E58585'}
+                stroke={tgt.id === 'blocked' ? '#30D158' : '#FF453A'}
                 strokeWidth="3"
                 className="animate-pulse"
               />
-              <circle r="4" fill={tgt.id === 'blocked' ? '#7FD1A8' : '#E58585'}>
+              <circle r="4" fill={tgt.id === 'blocked' ? '#30D158' : '#FF453A'}>
                 <animateMotion 
                   path={`M ${src.x + 30} ${src.y} C ${src.x + 80} ${src.y}, ${tgt.x - 80} ${tgt.y}, ${tgt.x - 30} ${tgt.y}`}
                   dur="0.8s" 

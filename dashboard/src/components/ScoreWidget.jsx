@@ -3,10 +3,10 @@ import { ShieldCheck, ShieldAlert, Info, Crosshair, Boxes, Wrench, Activity, Bug
 import { usePhishGuard } from '../App';
 
 const TONE = {
-  success: { text: 'text-cyber-success', stroke: '#7FD1A8', bg: 'bg-cyber-success/10', border: 'border-cyber-success/30' },
-  warning: { text: 'text-cyber-warning', stroke: '#E2B36B', bg: 'bg-cyber-warning/10', border: 'border-cyber-warning/30' },
-  danger:  { text: 'text-cyber-danger',  stroke: '#E58585', bg: 'bg-cyber-danger/10',  border: 'border-cyber-danger/30' },
-  muted:   { text: 'text-slate-400',     stroke: '#A4ACB8', bg: 'bg-slate-700/10',     border: 'border-slate-600/30' },
+  success: { text: 'text-cyber-success', stroke: '#30D158', bg: 'bg-cyber-success/10', border: 'border-cyber-success/30' },
+  warning: { text: 'text-cyber-warning', stroke: '#FF9F0A', bg: 'bg-cyber-warning/10', border: 'border-cyber-warning/30' },
+  danger:  { text: 'text-cyber-danger',  stroke: '#FF453A', bg: 'bg-cyber-danger/10',  border: 'border-cyber-danger/30' },
+  muted:   { text: 'text-slate-400',     stroke: '#8E8E93', bg: 'bg-slate-700/10',     border: 'border-slate-600/30' },
 };
 
 const BAND_ICON = {
@@ -36,7 +36,7 @@ export function GradeGauge({ score, grade, tone, size = 128, stroke = 9 }) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-[225deg]">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#3A3F48" strokeWidth={stroke}
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#3A3A3C" strokeWidth={stroke}
           strokeDasharray={`${arc} ${circ}`} strokeLinecap="round" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={t.stroke} strokeWidth={stroke}
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"

@@ -14,7 +14,7 @@ import { usePhishGuard } from '../App';
  * and reversible from here).
  */
 
-const SEV_DOT = { critical: '#E58585', high: '#E59A6A', moderate: '#E2B36B', low: '#86B4E6' };
+const SEV_DOT = { critical: '#FF453A', high: '#FF9F0A', moderate: '#FF9F0A', low: '#0A84FF' };
 
 const STRATEGY = {
   upgrade:         { label: 'BUMP',     cls: 'bg-cyber-primary/15 text-cyber-primary border-cyber-primary/40', icon: ArrowRight },
@@ -148,7 +148,7 @@ Those edits will be lost. Continue?`
               <div className="text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-1.5">
                 package.json diff
               </div>
-              <div className="rounded-lg border border-cyber-border/30 bg-[#22252B] p-2.5 font-mono text-[10px] space-y-0.5">
+              <div className="rounded-lg border border-cyber-border/30 bg-[#1C1C1E] p-2.5 font-mono text-[10px] space-y-0.5">
                 {preview.changes.map((c, i) => (
                   <React.Fragment key={i}>
                     {c.from != null && (
@@ -188,7 +188,7 @@ Those edits will be lost. Continue?`
                 <div className="text-[9px] font-mono text-slate-400">backup: {result.result.backup}</div>
               )}
               {result.result.needsInstall && (
-                <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-200 bg-[#22252B] rounded px-2 py-1 mt-1">
+                <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-200 bg-[#1C1C1E] rounded px-2 py-1 mt-1">
                   <Terminal className="w-3 h-3 text-cyber-primary" /> {result.result.needsInstall}
                 </div>
               )}
@@ -252,7 +252,7 @@ Those edits will be lost. Continue?`
                   ? 'border-cyber-border/30 bg-cyber-bg/40 hover:border-cyber-primary/50 hover:bg-cyber-bg/70'
                   : 'border-cyber-border/20 bg-cyber-bg/20 opacity-60 cursor-default'}`}>
               <div className="flex items-center gap-1.5 mb-1">
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: SEV_DOT[it.worstSeverity] || '#A4ACB8' }} />
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: SEV_DOT[it.worstSeverity] || '#8E8E93' }} />
                 <span className="font-mono text-[11px] font-bold text-slate-100 truncate">{it.package}</span>
                 {it.direct && <span className="px-1 rounded bg-cyber-primary/15 text-cyber-primary font-mono text-[8px] font-bold shrink-0">DIRECT</span>}
                 <span className={`ml-auto px-1.5 py-0.5 rounded border font-mono text-[8px] font-bold shrink-0 ${st.cls}`}>{st.label}</span>

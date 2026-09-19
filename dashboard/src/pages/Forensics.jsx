@@ -119,7 +119,7 @@ export default function Forensics() {
                 <h3 className="flex items-center gap-2 text-xs font-mono font-bold text-slate-300 uppercase tracking-widest mb-3 border-b border-cyber-border/30 pb-2 shrink-0">
                   <Code className="w-4 h-4 text-cyber-purple" /> Captured Call Stack
                 </h3>
-                <div className="flex-1 bg-[#22252B] border border-slate-700/50 rounded-lg p-4 overflow-y-auto">
+                <div className="flex-1 bg-[#1C1C1E] border border-slate-700/50 rounded-lg p-4 overflow-y-auto">
                   <pre className="font-mono text-[11px] leading-relaxed text-slate-300 whitespace-pre-wrap">{report.stack}</pre>
                 </div>
               </div>

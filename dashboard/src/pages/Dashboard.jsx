@@ -138,15 +138,15 @@ export default function Dashboard() {
               <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="cScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#A9C3DE" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#A9C3DE" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#0A84FF" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#0A84FF" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#3A3F48" strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="t" stroke="#A4ACB8" tick={{ fontSize: 9 }} />
-                <YAxis stroke="#A4ACB8" domain={[0, 100]} />
-                <Tooltip contentStyle={{ backgroundColor: '#2A2E35', borderColor: '#3A3F48', borderRadius: 6, color: '#ECEFF3', fontFamily: 'monospace' }} />
-                <Area name="Score" type="monotone" dataKey="score" stroke="#A9C3DE" fillOpacity={1} fill="url(#cScore)" />
+                <CartesianGrid stroke="#3A3A3C" strokeDasharray="3 3" opacity={0.2} />
+                <XAxis dataKey="t" stroke="#8E8E93" tick={{ fontSize: 9 }} />
+                <YAxis stroke="#8E8E93" domain={[0, 100]} />
+                <Tooltip contentStyle={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C', borderRadius: 6, color: '#F2F2F7', fontFamily: 'monospace' }} />
+                <Area name="Score" type="monotone" dataKey="score" stroke="#0A84FF" fillOpacity={1} fill="url(#cScore)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -163,11 +163,11 @@ export default function Dashboard() {
           <div className="flex-1 w-full text-xs font-mono">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={severityData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid stroke="#3A3F48" strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="name" stroke="#A4ACB8" tick={{ fontSize: 9 }} />
-                <YAxis stroke="#A4ACB8" allowDecimals={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#2A2E35', borderColor: '#3A3F48', borderRadius: 6, color: '#ECEFF3', fontFamily: 'monospace' }} />
-                <Bar dataKey="value" fill="#E58585" radius={[4, 4, 0, 0]} />
+                <CartesianGrid stroke="#3A3A3C" strokeDasharray="3 3" opacity={0.2} />
+                <XAxis dataKey="name" stroke="#8E8E93" tick={{ fontSize: 9 }} />
+                <YAxis stroke="#8E8E93" allowDecimals={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C', borderRadius: 6, color: '#F2F2F7', fontFamily: 'monospace' }} />
+                <Bar dataKey="value" fill="#FF453A" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

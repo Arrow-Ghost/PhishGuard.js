@@ -122,40 +122,29 @@ export default function App() {
         <Sidebar activeView={activeView} setActiveView={setActiveView} isConnected={isConnected} project={project} />
 
         <main className="relative z-10 flex-1 flex flex-col min-w-0 h-screen">
-          <header className="mx-6 mt-5 h-14 px-5 flex justify-between items-center shrink-0 select-none dg-pill !rounded-[22px]">
-            <div className="flex items-center gap-2.5">
-              <span className="text-sm text-slate-300">{project ? project.name : 'phishguard'}</span>
-              <span className="text-sm text-slate-500">/</span>
-              <span className="text-sm text-white font-semibold">{VIEW_LABELS[activeView] || activeView}</span>
+          <header className="h-[52px] px-5 flex justify-between items-center shrink-0 select-none border-b border-white/[0.06] bg-[#1C1C1E]/90">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[15px] font-semibold text-white">{VIEW_LABELS[activeView] || activeView}</span>
+              <span className="text-[12px] text-slate-500">{project ? project.name : 'phishguard'}</span>
             </div>
 
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-[13px]">
+                <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-cyber-success' : 'bg-cyber-danger'}`} />
+                <span className="text-slate-300">{isConnected ? 'Agent listening' : 'Offline'}</span>
+              </div>
               <button
                 onClick={runScan}
                 disabled={scanning}
-                className="dg-pearl flex items-center gap-2 text-[13px] font-semibold px-4 py-2 rounded-full hover:brightness-105 disabled:opacity-60 transition-all"
+                className="dg-pearl flex items-center gap-2 text-[13px] font-semibold px-3.5 py-1.5 rounded-[10px] disabled:opacity-60 transition-colors"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${scanning ? 'animate-spin' : ''}`} />
-                {scanning ? (scanProgress ? `${scanProgress.phase}…` : 'Scanning…') : 'Scan again'}
+                {scanning ? (scanProgress ? `${scanProgress.phase}…` : 'Scanning…') : 'Scan'}
               </button>
-
-              <div className="flex items-center gap-2 text-[13px]">
-                <span className="relative flex h-2 w-2">
-                  {isConnected ? (
-                    <>
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyber-success opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-success" />
-                    </>
-                  ) : (
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-danger" />
-                  )}
-                </span>
-                <span className="text-slate-200 font-medium">{isConnected ? 'Agent listening' : 'Offline'}</span>
-              </div>
             </div>
           </header>
 
-          <div className="flex-1 px-6 pt-6 pb-6 overflow-hidden relative z-10">
+          <div className="flex-1 px-8 pt-6 pb-6 overflow-hidden relative z-10">
             {renderActiveView()}
           </div>
         </main>

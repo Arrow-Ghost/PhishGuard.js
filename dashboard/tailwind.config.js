@@ -1,55 +1,49 @@
 /** @type {import('tailwindcss').Config} */
-// "Graphite Glass" theme: frosted glass and soft neumorphic metal over brushed
-// graphite. The `cyber-*` token names are kept so every component picks up the
-// palette without being rewritten; only the values changed.
+// Apple dark-mode system look: flat grouped surfaces, system accent colours and
+// SF-style type. The `cyber-*` token names are kept so every component picks up
+// the palette without being rewritten; only the values changed.
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
         cyber: {
-          bg: '#22252B',         // inset well
-          panel: '#2A2E35',      // raised slate
-          border: '#8E97A3',     // steel hairline (used at /20-/60)
-          primary: '#A9C3DE',    // steel
-          danger: '#E58585',     // garnet
-          success: '#7FD1A8',    // jade
-          warning: '#E2B36B',    // amber
-          purple: '#D9C7A6',     // champagne
-          muted: '#A4ACB8',
-          peach: '#D9C7A6',
+          bg: '#1C1C1E',
+          panel: '#2C2C2E',
+          border: '#EBEBF5',
+          primary: '#0A84FF',
+          danger: '#FF453A',
+          success: '#30D158',
+          warning: '#FF9F0A',
+          purple: '#BF5AF2',
+          muted: '#8E8E93',
+          peach: '#64D2FF',
         },
         slate: {
-          50: '#F7F8FA', 100: '#ECEFF3', 200: '#DDE1E7', 300: '#C4CAD3',
-          400: '#A4ACB8', 500: '#8A93A0', 600: '#7C8592', 700: '#5A626D',
-          800: '#3A3F48', 900: '#2A2E35', 950: '#22252B',
+          50: '#F9F9FB', 100: '#F2F2F7', 200: '#E5E5EA', 300: '#D1D1D6',
+          400: '#AEAEB2', 500: '#8E8E93', 600: '#636366', 700: '#48484A',
+          800: '#2C2C2E', 900: '#1C1C1E', 950: '#121214',
         },
       },
       fontFamily: {
-        mono: ['"Geist Mono"', '"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
-        sans: ['Manrope', 'system-ui', 'sans-serif'],
-        display: ['Sora', 'Manrope', 'system-ui', 'sans-serif'],
-        serif: ['Sora', 'Manrope', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono"', '"SF Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'glow-primary': '0 0 18px rgba(169, 195, 222, 0.22)',
-        'glow-danger': '0 0 18px rgba(229, 133, 133, 0.22)',
-        'glow-success': '0 0 18px rgba(127, 209, 168, 0.22)',
-        'glow-warning': '0 0 18px rgba(226, 179, 107, 0.22)',
-        'cyber-panel': '0 22px 56px -12px rgba(0, 0, 0, 0.4)',
+        'glow-primary': 'none',
+        'glow-danger': 'none',
+        'glow-success': 'none',
+        'glow-warning': 'none',
+        'cyber-panel': 'none',
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'glow-pulse': 'none',
         'scan': 'none',
-        'drift': 'drift 16s ease-in-out infinite',
-        'drift-slow': 'drift 24s ease-in-out infinite',
-      },
-      keyframes: {
-        drift: {
-          '0%, 100%': { transform: 'translate3d(0, 0, 0)' },
-          '50%': { transform: 'translate3d(0, -14px, 0)' },
-        },
+        'drift': 'none',
+        'drift-slow': 'none',
       },
     },
   },

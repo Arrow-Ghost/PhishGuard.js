@@ -5,108 +5,102 @@
 @layer base {
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(200, 208, 218, 0.2); border-radius: 999px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(200, 208, 218, 0.36); }
+  ::-webkit-scrollbar-thumb { background: rgba(235, 235, 245, 0.18); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(235, 235, 245, 0.32); }
 
-  html, body { background-color: #2A2D33; color: #ECEFF3; }
-  ::selection { background: rgba(169, 195, 222, 0.4); color: #FFFFFF; }
+  html, body {
+    background-color: #1C1C1E;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(10, 132, 255, 0.45); color: #FFFFFF; }
 
   main h2,
   main h3:not(.uppercase) {
-    font-family: 'Sora', 'Manrope', sans-serif !important;
-    font-weight: 400 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, system-ui, sans-serif !important;
+    font-weight: 700 !important;
     letter-spacing: -0.01em;
   }
 }
 
 @layer components {
-  /* Polished chrome: primary actions. */
+  /* Prominent system button. */
   .dg-pearl {
-    background: linear-gradient(160deg, #F1F4F8 0%, #B7C2CE 52%, #7E8995 100%);
-    color: #20242A;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 18px -4px rgba(0, 0, 0, 0.5);
+    background: #0A84FF;
+    color: #FFFFFF;
+    border: 0;
+    box-shadow: none;
   }
+  .dg-pearl:hover { background: #2B95FF; }
 
-  /* Raised neumorphic pill (header chips, secondary buttons). */
+  /* Secondary control surface (toolbar, chips). */
   .dg-pill {
-    background: linear-gradient(135deg, #3A3F48, #2A2E35);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
-    box-shadow: 7px 8px 18px rgba(18, 20, 23, 0.85), -5px -5px 14px rgba(74, 80, 91, 0.5);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: none;
   }
 
   .neo-raised {
-    background: linear-gradient(135deg, #3A3F48, #2A2E35);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 7px 8px 18px rgba(18, 20, 23, 0.85), -5px -5px 14px rgba(74, 80, 91, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: none;
   }
 
+  /* Selected / inset fill, like a selected sidebar row. */
   .neo-inset {
-    background: linear-gradient(135deg, #22252B, #2B2F36);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 4px 5px 10px rgba(15, 17, 20, 0.85), inset -3px -3px 8px rgba(74, 80, 91, 0.5);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid transparent;
+    box-shadow: none;
   }
 }
 
 @layer utilities {
-  /* Frosted glass pane over the brushed-graphite scene. */
+  /* Grouped card: the Apple secondary grouped surface. */
   .glass-panel,
   .glass-panel-danger,
   .glass-panel-success {
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03)),
-      rgba(42, 46, 53, 0.5);
-    backdrop-filter: blur(36px) saturate(120%);
-    -webkit-backdrop-filter: blur(36px) saturate(120%);
-    border-color: rgba(255, 255, 255, 0.18);
-    border-radius: 26px !important;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.28),
-      0 22px 56px -12px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
+    border-radius: 20px !important;
+    box-shadow: none;
   }
 
-  .glass-panel-danger { border-color: rgba(229, 133, 133, 0.4); }
-  .glass-panel-success { border-color: rgba(127, 209, 168, 0.4); }
+  .glass-panel-danger { border-color: rgba(255, 69, 58, 0.45); }
+  .glass-panel-success { border-color: rgba(48, 209, 88, 0.45); }
 
   .glass-panel-active {
-    border-color: rgba(169, 195, 222, 0.6);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.3),
-      0 0 0 1px rgba(169, 195, 222, 0.25),
-      0 22px 56px -12px rgba(0, 0, 0, 0.4);
+    border-color: rgba(10, 132, 255, 0.9);
+    box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.5);
   }
 
   .glow-text-primary, .glow-text-danger, .glow-text-success, .glow-text-warning { text-shadow: none; }
 
   .cli-terminal {
-    font-family: 'Geist Mono', 'JetBrains Mono', monospace;
-    background: rgba(20, 22, 26, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    box-shadow: inset 4px 5px 10px rgba(10, 11, 13, 0.7);
+    font-family: 'Geist Mono', 'SF Mono', ui-monospace, monospace;
+    background: rgba(0, 0, 0, 0.4);
+    border: 0;
+    border-radius: 12px;
+    box-shadow: none;
   }
 
-  /* Any inner well inside a glass pane becomes a carved (inset) surface. */
+  /* Inner wells inside a card become a slightly darker grouped fill. */
   .glass-panel .bg-cyber-bg\/40,
   .glass-panel .bg-cyber-bg\/50,
   .glass-panel .bg-cyber-bg\/60,
   .glass-panel .bg-cyber-bg\/70 {
-    background: linear-gradient(135deg, #22252B, #2B2F36) !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
-    box-shadow: inset 4px 5px 10px rgba(15, 17, 20, 0.85), inset -3px -3px 8px rgba(74, 80, 91, 0.45);
+    background: rgba(0, 0, 0, 0.28) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: none;
   }
 
-  /* Primary in-panel buttons read as raised metal keys. */
+  /* Primary in-panel buttons use the system blue. */
   .glass-panel button.bg-cyber-primary,
   .glass-panel button.bg-indigo-600 {
-    background: linear-gradient(160deg, #F1F4F8, #B7C2CE 55%, #7E8995) !important;
-    color: #20242A !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 8px 18px -4px rgba(0, 0, 0, 0.5);
+    background: #0A84FF !important;
+    color: #FFFFFF !important;
+    border: 0 !important;
+    box-shadow: none;
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-drift, .animate-drift-slow { animation: none !important; }
 }

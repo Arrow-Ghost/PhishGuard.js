@@ -28,7 +28,7 @@ const RINGS = [
 ];
 
 const SEV_RADIUS = { critical: 0.9, high: 0.7, moderate: 0.5, warning: 0.5, low: 0.3, info: 0.24 };
-const SEV_COLOR = { critical: '#E58585', high: '#E59A6A', moderate: '#E2B36B', warning: '#E2B36B', low: '#86B4E6', info: '#7FD1A8' };
+const SEV_COLOR = { critical: '#FF453A', high: '#FF9F0A', moderate: '#FF9F0A', warning: '#FF9F0A', low: '#0A84FF', info: '#30D158' };
 const SEV_LABEL = { critical: 'Critical', high: 'High', moderate: 'Moderate', warning: 'Moderate', low: 'Low', info: 'Info' };
 
 const CX = 150, CY = 150, R = 104;           // viewBox is 300 x 300
@@ -186,7 +186,7 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
 
           {/* dial face */}
           <circle cx={CX} cy={CY} r={R} fill="url(#rd-face)" />
-          <circle cx={CX} cy={CY} r={R + 1} fill="none" stroke="#ECEFF3" strokeOpacity="0.45" strokeWidth="1.2" />
+          <circle cx={CX} cy={CY} r={R + 1} fill="none" stroke="#F2F2F7" strokeOpacity="0.45" strokeWidth="1.2" />
 
           {/* alternating sector shading marks each threat vector */}
           {AXES.map((a, i) => {
@@ -195,31 +195,31 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
             const [x1, y1] = [CX + Math.cos(rad(a1)) * R, CY + Math.sin(rad(a1)) * R];
             return (
               <path key={a.key} d={`M ${CX} ${CY} L ${x0} ${y0} A ${R} ${R} 0 0 1 ${x1} ${y1} Z`}
-                fill="#ECEFF3" fillOpacity={i % 2 === 0 ? 0.045 : 0.015} />
+                fill="#F2F2F7" fillOpacity={i % 2 === 0 ? 0.045 : 0.015} />
             );
           })}
 
           {/* range rings */}
           {RINGS.map(ring => (
             <circle key={ring.label} cx={CX} cy={CY} r={R * ring.r} fill="none"
-              stroke="#ECEFF3" strokeOpacity={ring.r === 1 ? 0 : 0.2} strokeWidth="0.8" />
+              stroke="#F2F2F7" strokeOpacity={ring.r === 1 ? 0 : 0.2} strokeWidth="0.8" />
           ))}
 
           {/* sector dividers */}
           {AXES.map(a => {
             const [x, y] = pt(a.angle + 30, 1);
-            return <line key={a.key} x1={CX} y1={CY} x2={x} y2={y} stroke="#ECEFF3" strokeOpacity="0.22" strokeWidth="0.8" />;
+            return <line key={a.key} x1={CX} y1={CY} x2={x} y2={y} stroke="#F2F2F7" strokeOpacity="0.22" strokeWidth="0.8" />;
           })}
 
           {/* degree ticks */}
           {ticks.map((t, i) => (
-            <line key={i} x1={t.x0} y1={t.y0} x2={t.x1} y2={t.y1} stroke="#ECEFF3"
+            <line key={i} x1={t.x0} y1={t.y0} x2={t.x1} y2={t.y1} stroke="#F2F2F7"
               strokeOpacity={t.major ? 0.55 : 0.25} strokeWidth={t.major ? 1 : 0.7} />
           ))}
 
           {/* severity labels on the vertical axis */}
           {RINGS.map(ring => (
-            <text key={ring.label} x={CX + 3} y={CY - R * ring.r + 9} fill="#ECEFF3" fillOpacity="0.5"
+            <text key={ring.label} x={CX + 3} y={CY - R * ring.r + 9} fill="#F2F2F7" fillOpacity="0.5"
               style={{ fontSize: 5.6, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.08em' }}>
               {ring.label}
             </text>
@@ -227,8 +227,8 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
 
           {/* sweep with trail */}
           <g transform={`rotate(${sweep} ${CX} ${CY})`} clipPath="url(#rd-clip)">
-            {trail.map((w, i) => <path key={i} d={w.d} fill="#A9C3DE" fillOpacity={w.o} />)}
-            <line x1={CX} y1={CY} x2={CX + R} y2={CY} stroke="#ECEFF3" strokeOpacity="0.9" strokeWidth="1.3" />
+            {trail.map((w, i) => <path key={i} d={w.d} fill="#0A84FF" fillOpacity={w.o} />)}
+            <line x1={CX} y1={CY} x2={CX + R} y2={CY} stroke="#F2F2F7" strokeOpacity="0.9" strokeWidth="1.3" />
           </g>
 
           {/* sector names, with live counts */}
@@ -238,12 +238,12 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
             return (
               <g key={a.key}>
                 <text x={x} y={y - 2} textAnchor="middle" dominantBaseline="middle"
-                  fill={n ? '#ECEFF3' : '#D3D8DF'} fillOpacity={n ? 1 : 0.85}
+                  fill={n ? '#F2F2F7' : '#D1D1D6'} fillOpacity={n ? 1 : 0.85}
                   style={{ fontSize: 7.4, fontWeight: 700, fontFamily: 'ui-monospace, monospace', letterSpacing: '0.06em' }}>
                   {a.label}
                 </text>
                 <text x={x} y={y + 7.5} textAnchor="middle" dominantBaseline="middle"
-                  fill={n ? '#FFE3D4' : '#C0C6CF'} fillOpacity={n ? 1 : 0.8}
+                  fill={n ? '#FFE3D4' : '#AEAEB2'} fillOpacity={n ? 1 : 0.8}
                   style={{ fontSize: 7, fontFamily: 'ui-monospace, monospace' }}>
                   {n} {n === 1 ? 'contact' : 'contacts'}
                 </text>
@@ -254,7 +254,7 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
           {/* contacts */}
           {contacts.map(c => {
             const l = lit(c.bearing);
-            const col = SEV_COLOR[c.severity] || '#A4ACB8';
+            const col = SEV_COLOR[c.severity] || '#8E8E93';
             const isHover = hover && hover.id === c.id;
             return (
               <g key={c.id} onMouseEnter={() => setHover(c)} onMouseLeave={() => setHover(null)} style={{ cursor: 'pointer' }}>
@@ -270,8 +270,8 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
           })}
 
           {/* centre readout */}
-          <circle cx={CX} cy={CY} r="15" fill="#14161A" fillOpacity="0.85" stroke="#ECEFF3" strokeOpacity="0.4" strokeWidth="0.8" />
-          <text x={CX} y={CY + 1} textAnchor="middle" dominantBaseline="middle" fill="#ECEFF3"
+          <circle cx={CX} cy={CY} r="15" fill="#14161A" fillOpacity="0.85" stroke="#F2F2F7" strokeOpacity="0.4" strokeWidth="0.8" />
+          <text x={CX} y={CY + 1} textAnchor="middle" dominantBaseline="middle" fill="#F2F2F7"
             style={{ fontSize: 13, fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>
             {contacts.length}
           </text>

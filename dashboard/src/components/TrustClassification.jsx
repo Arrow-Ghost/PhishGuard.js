@@ -88,7 +88,7 @@ export default function TrustClassification() {
                     {pkg.reason}
                   </span>
                 )}
-                <div className="text-[11px] font-display font-black w-8 text-center" style={{ color: style.color === 'text-cyber-success' ? '#7FD1A8' : style.color === 'text-cyber-danger' ? '#E58585' : '#E2B36B'}}>
+                <div className="text-[11px] font-display font-black w-8 text-center" style={{ color: style.color === 'text-cyber-success' ? '#30D158' : style.color === 'text-cyber-danger' ? '#FF453A' : '#FF9F0A'}}>
                   {pkg.score}
                 </div>
               </div>

@@ -16,15 +16,15 @@ import {
  */
 
 const KIND = {
-  repo:       { color: '#A9C3DE', icon: FolderGit2,  ring: 26 },
-  dependency: { color: '#86B4E6', icon: Package,     ring: 24 },
-  sink:       { color: '#E58585', icon: Bug,         ring: 26 },
-  exploit:    { color: '#E58585', icon: Zap,         ring: 26 },
-  impact:     { color: '#E59A6A', icon: Crosshair,   ring: 22 },
-  mitigation: { color: '#7FD1A8', icon: ShieldCheck, ring: 28 },
+  repo:       { color: '#0A84FF', icon: FolderGit2,  ring: 26 },
+  dependency: { color: '#0A84FF', icon: Package,     ring: 24 },
+  sink:       { color: '#FF453A', icon: Bug,         ring: 26 },
+  exploit:    { color: '#FF453A', icon: Zap,         ring: 26 },
+  impact:     { color: '#FF9F0A', icon: Crosshair,   ring: 22 },
+  mitigation: { color: '#30D158', icon: ShieldCheck, ring: 28 },
 };
 
-const SEV_COLOR = { critical: '#E58585', high: '#E59A6A', moderate: '#E2B36B', low: '#86B4E6' };
+const SEV_COLOR = { critical: '#FF453A', high: '#FF9F0A', moderate: '#FF9F0A', low: '#0A84FF' };
 const SPEEDS = [0.5, 1, 2];
 
 export default function AttackTree({ tree, severity }) {
@@ -151,7 +151,7 @@ export default function AttackTree({ tree, severity }) {
         <div className="h-full rounded-full transition-all duration-500"
           style={{
             width: `${(step / Math.max(1, maxDepth)) * 100}%`,
-            background: done ? '#7FD1A8' : (SEV_COLOR[severity] || '#E58585'),
+            background: done ? '#30D158' : (SEV_COLOR[severity] || '#FF453A'),
           }} />
       </div>
 
@@ -159,7 +159,7 @@ export default function AttackTree({ tree, severity }) {
         <svg viewBox={`0 0 ${layout.width} ${layout.height}`} width="100%" style={{ maxHeight: layout.height }} preserveAspectRatio="xMidYMid meet" className="block mx-auto">
           <defs>
             <marker id="at-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-              <path d="M0,0 L7,3.5 L0,7 Z" fill="#A4ACB8" />
+              <path d="M0,0 L7,3.5 L0,7 Z" fill="#8E8E93" />
             </marker>
           </defs>
 
@@ -172,12 +172,12 @@ export default function AttackTree({ tree, severity }) {
                 <text x={h.x} y={13} textAnchor="middle"
                   style={{
                     fontSize: 11.5, fontWeight: 700, letterSpacing: '0.12em', fontFamily: 'ui-monospace, monospace',
-                    fill: active ? '#FFFFFF' : passed ? '#D3D8DF' : '#7C8592', transition: 'fill 400ms',
+                    fill: active ? '#FFFFFF' : passed ? '#D1D1D6' : '#8E8E93', transition: 'fill 400ms',
                   }}>
                   {h.label}
                 </text>
                 <line x1={h.x - 26} x2={h.x + 26} y1={20} y2={20}
-                  stroke={active ? '#FFFFFF' : '#5A626D'} strokeWidth={active ? 2 : 1}
+                  stroke={active ? '#FFFFFF' : '#636366'} strokeWidth={active ? 2 : 1}
                   strokeOpacity={active ? 0.9 : 0.6} style={{ transition: 'all 400ms' }} />
               </g>
             );
@@ -194,7 +194,7 @@ export default function AttackTree({ tree, severity }) {
             const r0 = (KIND[fromKind ? fromKind.kind : 'dependency'] || KIND.dependency).ring;
             const r1 = (KIND[e.kind] || KIND.dependency).ring;
             const d = `M ${a.x + r0 + 2} ${a.y} C ${mid} ${a.y}, ${mid} ${b.y}, ${b.x - r1 - 4} ${b.y}`;
-            const col = e.kind === 'mitigation' ? '#7FD1A8' : live ? (SEV_COLOR[severity] || '#E58585') : '#6E7783';
+            const col = e.kind === 'mitigation' ? '#30D158' : live ? (SEV_COLOR[severity] || '#FF453A') : '#6E7783';
             return (
               <g key={i}>
                 <path d={d} fill="none" stroke={col} strokeWidth={live ? 2.4 : 1.4}
@@ -222,7 +222,7 @@ export default function AttackTree({ tree, severity }) {
             const k = KIND[n.kind] || KIND.dependency;
             const on = reached(n);
             const isNow = n.depth === step;
-            const col = n.kind === 'mitigation' ? '#7FD1A8'
+            const col = n.kind === 'mitigation' ? '#30D158'
               : n.kind === 'sink' || n.kind === 'exploit' ? (SEV_COLOR[severity] || k.color)
               : k.color;
             const r = k.ring;
@@ -244,14 +244,14 @@ export default function AttackTree({ tree, severity }) {
                   style={{ transition: 'all 400ms' }} />
                 <foreignObject x={p.x - 12} y={p.y - 12} width="24" height="24" style={{ pointerEvents: 'none' }}>
                   <div className="w-6 h-6 flex items-center justify-center">
-                    <k.icon width={17} height={17} strokeWidth={2} style={{ color: on ? '#FFFFFF' : '#A4ACB8', transition: 'color 400ms' }} />
+                    <k.icon width={17} height={17} strokeWidth={2} style={{ color: on ? '#FFFFFF' : '#8E8E93', transition: 'color 400ms' }} />
                   </div>
                 </foreignObject>
 
                 <text x={p.x} y={p.y + r + 19} textAnchor="middle"
                   style={{
                     fontSize: 14.5, fontWeight: 700, fontFamily: 'ui-monospace, monospace',
-                    fill: on ? '#FFFFFF' : '#C0C6CF', transition: 'fill 400ms',
+                    fill: on ? '#FFFFFF' : '#AEAEB2', transition: 'fill 400ms',
                     paintOrder: 'stroke', stroke: '#1A1D22', strokeWidth: 4, strokeLinejoin: 'round',
                   }}>
                   {label}
@@ -259,7 +259,7 @@ export default function AttackTree({ tree, severity }) {
                 {n.version && (
                   <text x={p.x} y={p.y + r + 35} textAnchor="middle"
                     style={{
-                      fontSize: 12, fontFamily: 'ui-monospace, monospace', fill: on ? '#D3D8DF' : '#7C8592',
+                      fontSize: 12, fontFamily: 'ui-monospace, monospace', fill: on ? '#D1D1D6' : '#8E8E93',
                       paintOrder: 'stroke', stroke: '#1A1D22', strokeWidth: 3, strokeLinejoin: 'round',
                     }}>
                     v{n.version}
