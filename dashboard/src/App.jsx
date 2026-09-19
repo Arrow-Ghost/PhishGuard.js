@@ -129,10 +129,6 @@ export default function App() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-[13px]">
-                <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-cyber-success' : 'bg-cyber-danger'}`} />
-                <span className="text-slate-300">{isConnected ? 'Agent listening' : 'Offline'}</span>
-              </div>
               <button
                 onClick={runScan}
                 disabled={scanning}
@@ -144,7 +140,7 @@ export default function App() {
             </div>
           </header>
 
-          <div className="flex-1 px-8 pt-6 pb-6 overflow-hidden relative z-10">
+          <div className="flex-1 min-h-0 px-8 pt-6 pb-6 overflow-hidden relative z-10">
             {renderActiveView()}
           </div>
         </main>

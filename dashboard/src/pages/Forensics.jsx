@@ -23,7 +23,7 @@ export default function Forensics() {
   const report = incidents.find(i => i.id === activeId);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] gap-4">
+    <div className="flex flex-col h-full gap-4">
       {/* toolbar */}
       <div className="glass-panel rounded-xl border border-cyber-border/40 px-5 py-3 flex items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">

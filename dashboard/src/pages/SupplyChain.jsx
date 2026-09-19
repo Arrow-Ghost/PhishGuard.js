@@ -56,7 +56,7 @@ export default function SupplyChain() {
   const shownRisky = showAll ? risky : risky.slice(0, 30);
 
   return (
-    <div className="flex flex-col gap-6 h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+    <div className="flex flex-col gap-6 h-full overflow-y-auto pr-2">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[460px]">
         {/* left: control */}
         <div className="glass-panel rounded-xl border border-cyber-border/40 p-5 flex flex-col">

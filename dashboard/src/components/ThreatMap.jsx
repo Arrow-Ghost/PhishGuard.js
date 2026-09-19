@@ -289,11 +289,11 @@ export default function ThreatMap() {
     setQuarantiningNode(null);
   };
 
-  if (loading) return <div className="flex h-[calc(100vh-6rem)] items-center justify-center text-cyber-primary font-mono text-sm animate-pulse">Initializing Threat Vector Map...</div>;
-  if (error) return <div className="flex h-[calc(100vh-6rem)] items-center justify-center text-cyber-danger font-mono text-sm">{error}</div>;
+  if (loading) return <div className="flex h-full items-center justify-center text-cyber-primary font-mono text-sm animate-pulse">Initializing Threat Vector Map...</div>;
+  if (error) return <div className="flex h-full items-center justify-center text-cyber-danger font-mono text-sm">{error}</div>;
 
   return (
-    <div className="flex h-[calc(100vh-6rem)] gap-6 select-none">
+    <div className="flex h-full gap-6 select-none">
       {quarantiningNode && (
         <QuarantineWizard 
           pkg={quarantiningNode}

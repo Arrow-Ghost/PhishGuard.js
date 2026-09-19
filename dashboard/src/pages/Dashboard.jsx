@@ -58,7 +58,7 @@ export default function Dashboard() {
   ] : [];
 
   return (
-    <div className="space-y-6 overflow-y-auto max-h-[calc(100vh-4rem)] pr-2">
+    <div className="space-y-6 overflow-y-auto h-full pr-2 pb-2">
       <div className="flex justify-between items-center border-b border-cyber-border/20 pb-4 select-none">
         <div>
           <h2 className="font-sans font-bold text-xl text-slate-100">Security Dashboard</h2>
@@ -98,7 +98,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
         <MetricCard title="Packages Monitored" value={c ? c.total : '—'}
           subtext={c ? `${c.direct} direct · ${c.transitive} transitive` : 'run a scan'}
           icon={Layers} color="primary"
@@ -121,7 +121,7 @@ export default function Dashboard() {
           history={history} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-6">
         <ScoreWidget />
         <AttackRadar logs={logs} advisories={advisories} />
 

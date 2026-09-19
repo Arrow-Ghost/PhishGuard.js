@@ -321,7 +321,7 @@ export default function Sandbox() {
   const counts = (data && data.counts) || {};
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] gap-4 overflow-hidden">
+    <div className="flex flex-col h-full gap-4 overflow-hidden">
       {/* ------------------------------- header ------------------------------- */}
       <div className="glass-panel rounded-xl border border-cyber-border/40 p-4 shrink-0">
         <div className="flex justify-between items-start gap-4 flex-wrap mb-3">

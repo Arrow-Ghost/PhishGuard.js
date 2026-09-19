@@ -135,7 +135,7 @@ export default function GlobalIntel() {
   const active = selected && items.find(i => i.id === selected.id) ? selected : null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] gap-4">
+    <div className="flex flex-col h-full gap-4">
       {/* header */}
       <div className="glass-panel rounded-xl border border-cyber-border/40 p-5 shrink-0">
         <div className="flex justify-between items-start gap-4 flex-wrap">

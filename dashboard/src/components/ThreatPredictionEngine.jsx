@@ -16,7 +16,7 @@ export default function ThreatPredictionEngine() {
   }, [nonce]);
 
   return (
-    <div className="glass-panel rounded-xl border border-cyber-border/40 p-5 flex flex-col h-[400px]">
+    <div className="glass-panel rounded-xl border border-cyber-border/40 p-5 flex flex-col h-[400px] overflow-hidden">
       <div className="flex justify-between items-center mb-4 border-b border-cyber-border/30 pb-3 shrink-0">
         <div className="flex items-center gap-2">
           <BrainCircuit className="w-5 h-5 text-cyber-purple" />
