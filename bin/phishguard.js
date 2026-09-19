@@ -56,7 +56,7 @@ function printReport(report) {
   if (report.codebaseScan && report.codebaseScan.scanned) {
     console.log(c(C.grey, `  codebase map: ${report.codebaseScan.filesScanned} source files scanned${report.codebaseScan.truncated ? ' (truncated)' : ''}`));
   }
-  if (report.offline) console.log(c(C.yellow, '  ⚠ offline / degraded data - results may be incomplete'));
+  if (report.offline) console.log(c(C.yellow, '  [warn] offline / degraded data - results may be incomplete'));
   console.log('');
 
   const gradeCol = report.score >= 80 ? C.green : report.score >= 55 ? C.yellow : C.red;
@@ -190,10 +190,10 @@ async function cmdScan(flags) {
     report.counts.low ? SEV_ORDER.low : 0,
   );
   if (worst >= threshold) {
-    if (!flags.json) console.error(c(C.red, `  ✗ findings at or above "${failOn}" — exiting 1`));
+    if (!flags.json) console.error(c(C.red, `  [fail] findings at or above "${failOn}" — exiting 1`));
     return 1;
   }
-  if (!flags.json) console.log(c(C.green, `  ✓ no findings at or above "${failOn}"`));
+  if (!flags.json) console.log(c(C.green, `  [ok] no findings at or above "${failOn}"`));
   return 0;
 }
 

@@ -439,7 +439,7 @@ export default function ThreatMap() {
                       cx={node.x}
                       cy={node.y}
                       r={node.r}
-                      className={`stroke-[2.5] fill-[#0d1117] transition-colors duration-300 ${
+                      className={`stroke-[2.5] fill-[#22252B] transition-colors duration-300 ${
                         isQuarantined ? 'stroke-slate-600 fill-slate-900/90' : 
                         isRoot ? 'stroke-cyber-primary shadow-glow-primary' : 
                         isCritical ? 'stroke-cyber-danger shadow-glow-danger' : 
@@ -456,7 +456,7 @@ export default function ThreatMap() {
                       style={{ fontSize: isRoot ? 20 : 15 }}
                       className="font-sans font-bold select-none pointer-events-none fill-slate-300"
                     >
-                      {isRoot ? 'C' : isQuarantined ? '🔒' : isCritical ? '🛑' : isWarning ? '⚠️' : '✓'}
+                      {isRoot ? 'P' : isQuarantined ? 'Q' : isCritical ? '!' : isWarning ? '!' : ''}
                     </text>
 
                     {/* Label - always for root/direct/risky, on demand for the healthy outer ring */}
@@ -468,7 +468,7 @@ export default function ThreatMap() {
                         style={{
                           fontSize: isRoot ? 18 : node.ring === 1 ? 14 : 12,
                           paintOrder: 'stroke',
-                          stroke: '#0a0e17',
+                          stroke: '#22252B',
                           strokeWidth: 3.5,
                           strokeLinejoin: 'round',
                         }}

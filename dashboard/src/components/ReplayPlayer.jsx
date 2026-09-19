@@ -96,7 +96,7 @@ export default function ReplayPlayer({ log, onClose }) {
         </div>
 
         {/* Replay Viewer */}
-        <div className="p-6 bg-[#080a10] min-h-[300px] flex gap-6 relative overflow-hidden">
+        <div className="p-6 bg-[#22252B] min-h-[300px] flex gap-6 relative overflow-hidden">
           {/* Vertical Timeline Track */}
           <div className="w-2 bg-cyber-border/30 rounded-full relative ml-4">
             <div 

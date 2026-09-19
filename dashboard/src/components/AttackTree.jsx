@@ -16,15 +16,15 @@ import {
  */
 
 const KIND = {
-  repo:       { color: '#818cf8', icon: FolderGit2,  ring: 22 },
-  dependency: { color: '#38bdf8', icon: Package,     ring: 18 },
-  sink:       { color: '#f43f5e', icon: Bug,         ring: 21 },
-  exploit:    { color: '#f43f5e', icon: Zap,         ring: 22 },
-  impact:     { color: '#fb923c', icon: Crosshair,   ring: 17 },
-  mitigation: { color: '#10b981', icon: ShieldCheck, ring: 23 },
+  repo:       { color: '#A9C3DE', icon: FolderGit2,  ring: 26 },
+  dependency: { color: '#86B4E6', icon: Package,     ring: 24 },
+  sink:       { color: '#E58585', icon: Bug,         ring: 26 },
+  exploit:    { color: '#E58585', icon: Zap,         ring: 26 },
+  impact:     { color: '#E59A6A', icon: Crosshair,   ring: 22 },
+  mitigation: { color: '#7FD1A8', icon: ShieldCheck, ring: 28 },
 };
 
-const SEV_COLOR = { critical: '#f43f5e', high: '#fb923c', moderate: '#f59e0b', low: '#38bdf8' };
+const SEV_COLOR = { critical: '#E58585', high: '#E59A6A', moderate: '#E2B36B', low: '#86B4E6' };
 const SPEEDS = [0.5, 1, 2];
 
 export default function AttackTree({ tree, severity }) {
@@ -61,19 +61,19 @@ export default function AttackTree({ tree, severity }) {
       byDepth.get(n.depth).push(n);
     }
     const depths = [...byDepth.keys()].sort((a, b) => a - b);
-    const colW = 156;
-    const rowH = 62;
+    const colW = 150;
+    const rowH = 84;
     const widest = Math.max(...depths.map(d => byDepth.get(d).length));
-    const height = Math.max(168, widest * rowH + 52);
-    const width = 70 + depths.length * colW;
+    const height = Math.max(210, widest * rowH + 84);
+    const width = 100 + depths.length * colW + 60;
 
     const pos = new Map();
     for (const d of depths) {
       const list = byDepth.get(d);
       list.forEach((n, i) => {
         pos.set(n.id, {
-          x: 56 + d * colW,
-          y: height / 2 + (i - (list.length - 1) / 2) * rowH,
+          x: 100 + d * colW,
+          y: 22 + height / 2 + (i - (list.length - 1) / 2) * rowH,
         });
       });
     }
@@ -86,7 +86,12 @@ export default function AttackTree({ tree, severity }) {
         edges.push({ from: p, to: n.id, depth: n.depth, kind: n.kind });
       }
     }
-    return { nodes: tree.nodes, pos, edges, width, height, depths };
+    const heads = depths.map(d => {
+      const n = byDepth.get(d)[0];
+      const label = { repo: 'ENTRY', dependency: 'DEPENDENCY', sink: 'VULNERABLE', exploit: 'EXPLOIT', impact: 'IMPACT', mitigation: 'PHISHGUARD' }[n.kind] || 'STEP';
+      return { d, x: 100 + d * colW, label };
+    });
+    return { nodes: tree.nodes, pos, edges, width, height: height + 22, depths, heads };
   }, [tree]);
 
   if (!tree || !layout) return null;
@@ -113,13 +118,13 @@ export default function AttackTree({ tree, severity }) {
       {/* header + transport */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <Crosshair className="w-3.5 h-3.5 text-cyber-primary shrink-0" />
-        <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Attack path simulation</span>
+        <span className="text-[11px] font-mono uppercase tracking-widest text-slate-300">Attack path simulation</span>
 
-        <span className={`ml-1 px-1.5 py-0.5 rounded font-mono text-[9px] font-bold ${
+        <span className={`ml-1 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold ${
           done ? 'bg-cyber-success/15 text-cyber-success' : 'bg-cyber-danger/15 text-cyber-danger'}`}>
           {done ? 'NEUTRALISED' : `STEP ${step}/${maxDepth}`}
         </span>
-        {phaseLabel && <span className="text-[10px] text-slate-500 truncate">{phaseLabel}</span>}
+        {phaseLabel && <span className="text-[12px] text-slate-200 truncate">{phaseLabel}</span>}
 
         <div className="ml-auto flex items-center gap-1 shrink-0">
           <button onClick={() => { setStep(0); setPlaying(true); }} title="Replay"
@@ -146,36 +151,66 @@ export default function AttackTree({ tree, severity }) {
         <div className="h-full rounded-full transition-all duration-500"
           style={{
             width: `${(step / Math.max(1, maxDepth)) * 100}%`,
-            background: done ? '#10b981' : (SEV_COLOR[severity] || '#f43f5e'),
+            background: done ? '#7FD1A8' : (SEV_COLOR[severity] || '#E58585'),
           }} />
       </div>
 
       <div className="overflow-x-auto custom-scrollbar">
-        <svg width={layout.width} height={layout.height} className="block">
+        <svg viewBox={`0 0 ${layout.width} ${layout.height}`} width="100%" style={{ maxHeight: layout.height }} preserveAspectRatio="xMidYMid meet" className="block mx-auto">
           <defs>
-            <marker id="at-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#475569" />
+            <marker id="at-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <path d="M0,0 L7,3.5 L0,7 Z" fill="#A4ACB8" />
             </marker>
           </defs>
+
+          {/* phase headers */}
+          {layout.heads.map(h => {
+            const active = h.d === step;
+            const passed = h.d < step;
+            return (
+              <g key={h.d}>
+                <text x={h.x} y={13} textAnchor="middle"
+                  style={{
+                    fontSize: 11.5, fontWeight: 700, letterSpacing: '0.12em', fontFamily: 'ui-monospace, monospace',
+                    fill: active ? '#FFFFFF' : passed ? '#D3D8DF' : '#7C8592', transition: 'fill 400ms',
+                  }}>
+                  {h.label}
+                </text>
+                <line x1={h.x - 26} x2={h.x + 26} y1={20} y2={20}
+                  stroke={active ? '#FFFFFF' : '#5A626D'} strokeWidth={active ? 2 : 1}
+                  strokeOpacity={active ? 0.9 : 0.6} style={{ transition: 'all 400ms' }} />
+              </g>
+            );
+          })}
 
           {/* edges */}
           {layout.edges.map((e, i) => {
             const a = layout.pos.get(e.from);
             const b = layout.pos.get(e.to);
             const live = edgeLive(e);
+            const advancing = live && e.depth === step && !done;
             const mid = (a.x + b.x) / 2;
-            const d = `M ${a.x + 20} ${a.y} C ${mid} ${a.y}, ${mid} ${b.y}, ${b.x - 20} ${b.y}`;
-            const col = e.kind === 'mitigation' ? '#10b981' : live ? (SEV_COLOR[severity] || '#f43f5e') : '#334155';
+            const fromKind = layout.nodes.find(n => n.id === e.from);
+            const r0 = (KIND[fromKind ? fromKind.kind : 'dependency'] || KIND.dependency).ring;
+            const r1 = (KIND[e.kind] || KIND.dependency).ring;
+            const d = `M ${a.x + r0 + 2} ${a.y} C ${mid} ${a.y}, ${mid} ${b.y}, ${b.x - r1 - 4} ${b.y}`;
+            const col = e.kind === 'mitigation' ? '#7FD1A8' : live ? (SEV_COLOR[severity] || '#E58585') : '#6E7783';
             return (
               <g key={i}>
-                <path d={d} fill="none" stroke={live ? col : '#1e293b'} strokeWidth={live ? 2 : 1.2}
-                  strokeDasharray={live ? 'none' : '3 4'} opacity={live ? 0.85 : 0.5}
-                  style={{ transition: 'stroke 500ms, stroke-width 500ms, opacity 500ms' }}
+                <path d={d} fill="none" stroke={col} strokeWidth={live ? 2.4 : 1.4}
+                  strokeDasharray={live ? 'none' : '4 5'} strokeOpacity={live ? 0.95 : 0.55}
+                  style={{ transition: 'stroke 400ms, stroke-width 400ms, stroke-opacity 400ms' }}
                   markerEnd={live ? undefined : 'url(#at-arrow)'} />
-                {live && e.depth === step && (
-                  <circle r="3.5" fill={col}>
-                    <animateMotion path={d} dur="1.1s" repeatCount="3" />
-                  </circle>
+                {advancing && (
+                  <>
+                    <path d={d} fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round"
+                      strokeDasharray="6 14" strokeOpacity="0.9">
+                      <animate attributeName="stroke-dashoffset" from="20" to="0" dur="0.7s" repeatCount="indefinite" />
+                    </path>
+                    <circle r="4.5" fill="#FFFFFF" stroke={col} strokeWidth="2">
+                      <animateMotion path={d} dur="0.95s" repeatCount="indefinite" />
+                    </circle>
+                  </>
                 )}
               </g>
             );
@@ -187,48 +222,46 @@ export default function AttackTree({ tree, severity }) {
             const k = KIND[n.kind] || KIND.dependency;
             const on = reached(n);
             const isNow = n.depth === step;
-            const col = n.kind === 'mitigation' ? '#10b981'
+            const col = n.kind === 'mitigation' ? '#7FD1A8'
               : n.kind === 'sink' || n.kind === 'exploit' ? (SEV_COLOR[severity] || k.color)
               : k.color;
             const r = k.ring;
+            const label = String(n.label).length > 17 ? String(n.label).slice(0, 15) + '…' : String(n.label);
             return (
-              <g key={n.id}
-                onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(null)}
-                style={{ cursor: 'pointer' }}>
-                {/* the pulse marks the step currently advancing - it stops once
-                    the simulation reaches the mitigation node */}
+              <g key={n.id} onMouseEnter={() => setHover(n)} onMouseLeave={() => setHover(null)} style={{ cursor: 'pointer' }}>
                 {on && isNow && !done && (
-                  <circle cx={p.x} cy={p.y} r={r + 6} fill="none" stroke={col} strokeWidth="1.5" opacity="0.5">
-                    <animate attributeName="r" values={`${r};${r + 12};${r}`} dur="1.4s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.6;0;0.6" dur="1.4s" repeatCount="indefinite" />
+                  <circle cx={p.x} cy={p.y} r={r} fill="none" stroke={col} strokeWidth="2">
+                    <animate attributeName="r" values={`${r};${r + 12}`} dur="1.3s" repeatCount="indefinite" />
+                    <animate attributeName="stroke-opacity" values="0.7;0" dur="1.3s" repeatCount="indefinite" />
                   </circle>
                 )}
+                {/* solid dark base keeps the icon readable over the glass */}
+                <circle cx={p.x} cy={p.y} r={r} fill="#1A1D22" />
                 <circle cx={p.x} cy={p.y} r={r}
-                  fill={on ? `${col}1f` : '#0d1117'}
-                  stroke={on ? col : '#334155'}
-                  strokeWidth={on ? 2.2 : 1.2}
-                  style={{
-                    transition: 'all 500ms',
-                    filter: on ? `drop-shadow(0 0 8px ${col}66)` : 'none',
-                  }} />
-                <foreignObject x={p.x - 10} y={p.y - 10} width="20" height="20" style={{ pointerEvents: 'none' }}>
-                  <div className="w-5 h-5 flex items-center justify-center">
-                    <k.icon width={13} height={13} style={{ color: on ? col : '#475569', transition: 'color 500ms' }} />
+                  fill={on ? col : 'none'} fillOpacity={on ? 0.18 : 0}
+                  stroke={on ? col : '#6E7783'} strokeWidth={on ? 2.6 : 1.6}
+                  strokeDasharray={on ? 'none' : '3 3'}
+                  style={{ transition: 'all 400ms' }} />
+                <foreignObject x={p.x - 12} y={p.y - 12} width="24" height="24" style={{ pointerEvents: 'none' }}>
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    <k.icon width={17} height={17} strokeWidth={2} style={{ color: on ? '#FFFFFF' : '#A4ACB8', transition: 'color 400ms' }} />
                   </div>
                 </foreignObject>
 
-                {/* label */}
-                <text x={p.x} y={p.y + r + 13} textAnchor="middle"
+                <text x={p.x} y={p.y + r + 19} textAnchor="middle"
                   style={{
-                    fontSize: 10, fontWeight: 700, fontFamily: 'ui-monospace, monospace',
-                    fill: on ? '#e2e8f0' : '#475569', transition: 'fill 500ms',
-                    paintOrder: 'stroke', stroke: '#0a0e17', strokeWidth: 3, strokeLinejoin: 'round',
+                    fontSize: 14.5, fontWeight: 700, fontFamily: 'ui-monospace, monospace',
+                    fill: on ? '#FFFFFF' : '#C0C6CF', transition: 'fill 400ms',
+                    paintOrder: 'stroke', stroke: '#1A1D22', strokeWidth: 4, strokeLinejoin: 'round',
                   }}>
-                  {String(n.label).length > 20 ? String(n.label).slice(0, 18) + '…' : n.label}
+                  {label}
                 </text>
                 {n.version && (
-                  <text x={p.x} y={p.y + r + 24} textAnchor="middle"
-                    style={{ fontSize: 8, fontFamily: 'ui-monospace, monospace', fill: on ? '#64748b' : '#334155' }}>
+                  <text x={p.x} y={p.y + r + 35} textAnchor="middle"
+                    style={{
+                      fontSize: 12, fontFamily: 'ui-monospace, monospace', fill: on ? '#D3D8DF' : '#7C8592',
+                      paintOrder: 'stroke', stroke: '#1A1D22', strokeWidth: 3, strokeLinejoin: 'round',
+                    }}>
                     v{n.version}
                   </text>
                 )}
@@ -250,12 +283,12 @@ export default function AttackTree({ tree, severity }) {
               {hover.phase}
             </span>
             <div className="min-w-0">
-              <div className="text-[11px] font-bold text-slate-200">{hover.label}</div>
-              <div className="text-[10px] text-slate-400 leading-snug">{hover.detail}</div>
+              <div className="text-[13px] font-bold text-white">{hover.label}</div>
+              <div className="text-[12px] text-slate-300 leading-snug">{hover.detail}</div>
             </div>
           </div>
         ) : (
-          <div className="text-[10px] text-slate-500 font-mono">
+          <div className="text-[11px] text-slate-400 font-mono">
             {tree.route.length > 1
               ? `Route: ${tree.route.join(' → ')} · hover any node for detail`
               : 'Direct dependency · hover any node for detail'}

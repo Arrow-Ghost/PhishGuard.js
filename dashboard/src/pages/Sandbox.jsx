@@ -8,26 +8,26 @@ import { usePhishGuard } from '../App';
 import AttackTree from '../components/AttackTree';
 
 const SEV = {
-  critical: { chip: 'bg-cyber-danger/15 text-cyber-danger border-cyber-danger/40', dot: '#f43f5e', ring: 'border-cyber-danger/40 hover:border-cyber-danger' },
-  high:     { chip: 'bg-orange-500/15 text-orange-400 border-orange-500/40',       dot: '#fb923c', ring: 'border-orange-500/40 hover:border-orange-500' },
-  moderate: { chip: 'bg-cyber-warning/15 text-cyber-warning border-cyber-warning/40', dot: '#f59e0b', ring: 'border-cyber-warning/40 hover:border-cyber-warning' },
-  low:      { chip: 'bg-sky-500/15 text-sky-400 border-sky-500/40',                dot: '#38bdf8', ring: 'border-sky-500/40 hover:border-sky-500' },
-  warning:  { chip: 'bg-cyber-warning/15 text-cyber-warning border-cyber-warning/40', dot: '#f59e0b', ring: 'border-cyber-warning/40 hover:border-cyber-warning' },
+  critical: { chip: 'bg-cyber-danger/15 text-cyber-danger border-cyber-danger/40', dot: '#E58585', ring: 'border-cyber-danger/40 hover:border-cyber-danger' },
+  high:     { chip: 'bg-orange-500/15 text-orange-400 border-orange-500/40',       dot: '#E59A6A', ring: 'border-orange-500/40 hover:border-orange-500' },
+  moderate: { chip: 'bg-cyber-warning/15 text-cyber-warning border-cyber-warning/40', dot: '#E2B36B', ring: 'border-cyber-warning/40 hover:border-cyber-warning' },
+  low:      { chip: 'bg-sky-500/15 text-sky-400 border-sky-500/40',                dot: '#86B4E6', ring: 'border-sky-500/40 hover:border-sky-500' },
+  warning:  { chip: 'bg-cyber-warning/15 text-cyber-warning border-cyber-warning/40', dot: '#E2B36B', ring: 'border-cyber-warning/40 hover:border-cyber-warning' },
 };
 
 const KIND_ICON = { vulnerability: Bug, malicious: PackageX, typosquat: Target, deprecated: Layers, 'lifecycle-script': Wrench };
 
 const CIA = {
-  high:   { label: 'HIGH',   cls: 'text-cyber-danger',  w: '100%', color: '#f43f5e' },
-  medium: { label: 'MEDIUM', cls: 'text-cyber-warning', w: '60%',  color: '#f59e0b' },
-  low:    { label: 'LOW',    cls: 'text-sky-400',       w: '30%',  color: '#38bdf8' },
-  none:   { label: 'NONE',   cls: 'text-slate-600',     w: '4%',   color: '#475569' },
+  high:   { label: 'HIGH',   cls: 'text-cyber-danger',  w: '100%', color: '#E58585' },
+  medium: { label: 'MEDIUM', cls: 'text-cyber-warning', w: '60%',  color: '#E2B36B' },
+  low:    { label: 'LOW',    cls: 'text-sky-400',       w: '30%',  color: '#86B4E6' },
+  none:   { label: 'NONE',   cls: 'text-slate-600',     w: '4%',   color: '#7C8592' },
 };
 
 const PHASE_COLOR = {
-  delivery: '#818cf8', reconnaissance: '#38bdf8', execution: '#fb923c',
-  exploitation: '#f43f5e', collection: '#f59e0b', exfiltration: '#f43f5e',
-  impact: '#f43f5e', mitigation: '#10b981',
+  delivery: '#A9C3DE', reconnaissance: '#86B4E6', execution: '#E59A6A',
+  exploitation: '#E58585', collection: '#E2B36B', exfiltration: '#E58585',
+  impact: '#E58585', mitigation: '#7FD1A8',
 };
 
 export default function Sandbox() {
@@ -587,7 +587,7 @@ function KillChain({ chain }) {
       </div>
       <div className="flex items-stretch gap-0 overflow-x-auto custom-scrollbar pb-1">
         {chain.map((node, i) => {
-          const col = PHASE_COLOR[node.phase] || '#64748b';
+          const col = PHASE_COLOR[node.phase] || '#A4ACB8';
           const last = i === chain.length - 1;
           return (
             <React.Fragment key={node.id}>
@@ -604,7 +604,7 @@ function KillChain({ chain }) {
               {!last && (
                 <div className="flex items-start pt-4 shrink-0" style={{ width: 22 }}>
                   <div className="h-0.5 w-full rounded"
-                    style={{ background: `linear-gradient(90deg, ${col}, ${PHASE_COLOR[chain[i + 1].phase] || '#64748b'})` }} />
+                    style={{ background: `linear-gradient(90deg, ${col}, ${PHASE_COLOR[chain[i + 1].phase] || '#A4ACB8'})` }} />
                 </div>
               )}
             </React.Fragment>
@@ -637,15 +637,15 @@ function Tag({ label, value, tone }) {
 }
 
 const TONE = {
-  attack:    { label: 'text-fuchsia-400', bar: '#c026d3' },
-  detect:    { label: 'text-sky-400',     bar: '#38bdf8' },
-  policy:    { label: 'text-indigo-400',  bar: '#818cf8' },
-  block:     { label: 'text-cyber-danger', bar: '#f43f5e' },
-  flag:      { label: 'text-cyber-warning', bar: '#f59e0b' },
-  allow:     { label: 'text-slate-400',   bar: '#64748b' },
-  contained: { label: 'text-cyber-success', bar: '#10b981' },
-  escaped:   { label: 'text-cyber-danger', bar: '#f43f5e' },
-  meta:      { label: 'text-slate-500',   bar: '#334155' },
+  attack:    { label: 'text-fuchsia-400', bar: '#D9C7A6' },
+  detect:    { label: 'text-sky-400',     bar: '#86B4E6' },
+  policy:    { label: 'text-indigo-400',  bar: '#A9C3DE' },
+  block:     { label: 'text-cyber-danger', bar: '#E58585' },
+  flag:      { label: 'text-cyber-warning', bar: '#E2B36B' },
+  allow:     { label: 'text-slate-400',   bar: '#A4ACB8' },
+  contained: { label: 'text-cyber-success', bar: '#7FD1A8' },
+  escaped:   { label: 'text-cyber-danger', bar: '#E58585' },
+  meta:      { label: 'text-slate-500',   bar: '#5A626D' },
 };
 
 function Console({ lines, termRef, onClear, contained }) {

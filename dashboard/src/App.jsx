@@ -8,7 +8,19 @@ import LogTable from './components/LogTable';
 import Forensics from './pages/Forensics';
 import DatabaseExplorer from './pages/DatabaseExplorer';
 import GlobalIntel from './pages/GlobalIntel';
+import DreamBackdrop from './components/DreamBackdrop';
 import { RefreshCw } from 'lucide-react';
+
+const VIEW_LABELS = {
+  dashboard: 'Dashboard',
+  supplychain: 'Supply Chain',
+  threatmap: 'Threat Map',
+  globalintel: 'Global Intel',
+  logs: 'Telemetry',
+  forensics: 'Forensics',
+  dbexplorer: 'Database',
+  sandbox: 'Shield Sandbox',
+};
 
 const WS_URL = import.meta.env.DEV
   ? 'ws://localhost:4173'
@@ -104,30 +116,30 @@ export default function App() {
 
   return (
     <PhishGuardContext.Provider value={ctx}>
-      <div className="flex h-screen w-screen bg-cyber-bg text-slate-100 overflow-hidden font-sans">
+      <div className="relative flex h-screen w-screen text-slate-100 overflow-hidden font-sans">
+        <DreamBackdrop />
+
         <Sidebar activeView={activeView} setActiveView={setActiveView} isConnected={isConnected} project={project} />
 
-        <main className="flex-1 flex flex-col min-w-0 h-screen bg-cyber-bg">
-          <header className="h-16 border-b border-cyber-border/40 px-8 flex justify-between items-center shrink-0 bg-cyber-panel/40 select-none">
+        <main className="relative z-10 flex-1 flex flex-col min-w-0 h-screen">
+          <header className="mx-6 mt-5 h-14 px-5 flex justify-between items-center shrink-0 select-none dg-pill !rounded-[22px]">
             <div className="flex items-center gap-2.5">
-              <span className="text-xs font-mono text-slate-400">{project ? project.name : 'phishguard'}</span>
-              <span className="text-xs font-mono text-slate-600">/</span>
-              <span className="text-xs font-mono text-slate-200 capitalize font-medium">{activeView}</span>
+              <span className="text-sm text-slate-300">{project ? project.name : 'phishguard'}</span>
+              <span className="text-sm text-slate-500">/</span>
+              <span className="text-sm text-white font-semibold">{VIEW_LABELS[activeView] || activeView}</span>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-5">
               <button
                 onClick={runScan}
                 disabled={scanning}
-                className="flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-md border border-cyber-border/40 text-slate-300 hover:text-white hover:border-cyber-primary/60 disabled:opacity-50 transition-all"
+                className="dg-pearl flex items-center gap-2 text-[13px] font-semibold px-4 py-2 rounded-full hover:brightness-105 disabled:opacity-60 transition-all"
               >
-                <RefreshCw className={`w-3 h-3 ${scanning ? 'animate-spin' : ''}`} />
-                {scanning ? (scanProgress ? `${scanProgress.phase}…` : 'Scanning…') : 'Re-scan repo'}
+                <RefreshCw className={`w-3.5 h-3.5 ${scanning ? 'animate-spin' : ''}`} />
+                {scanning ? (scanProgress ? `${scanProgress.phase}…` : 'Scanning…') : 'Scan again'}
               </button>
 
-              <div className="w-px h-6 bg-cyber-border/40" />
-
-              <div className="flex items-center gap-2 font-mono text-xs">
+              <div className="flex items-center gap-2 text-[13px]">
                 <span className="relative flex h-2 w-2">
                   {isConnected ? (
                     <>
@@ -138,12 +150,12 @@ export default function App() {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-cyber-danger" />
                   )}
                 </span>
-                <span className="text-slate-400 font-medium">{isConnected ? 'Telemetry Active' : 'Offline'}</span>
+                <span className="text-slate-200 font-medium">{isConnected ? 'Agent listening' : 'Offline'}</span>
               </div>
             </div>
           </header>
 
-          <div className="flex-1 p-8 overflow-hidden relative z-10">
+          <div className="flex-1 px-6 pt-6 pb-6 overflow-hidden relative z-10">
             {renderActiveView()}
           </div>
         </main>

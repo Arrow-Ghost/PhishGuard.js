@@ -189,7 +189,7 @@ export default function QuarantineWizard({ pkg, onComplete, onCancel }) {
                   <FileJson className="w-3 h-3" /> package.json changes
                 </div>
                 {plan.changes.length ? (
-                  <div className="rounded-lg border border-cyber-border/40 bg-[#0d1117] p-3 font-mono text-[11px] space-y-0.5">
+                  <div className="rounded-lg border border-cyber-border/40 bg-[#22252B] p-3 font-mono text-[11px] space-y-0.5">
                     {plan.changes.map((c, i) => (
                       <React.Fragment key={i}>
                         {c.from != null && <div className="text-cyber-danger">- "{c.pointer}": {JSON.stringify(c.from)}</div>}
@@ -254,7 +254,7 @@ export default function QuarantineWizard({ pkg, onComplete, onCancel }) {
               {result.result.needsInstall && (
                 <div>
                   <div className="text-[9px] font-mono uppercase tracking-widest text-slate-500 mb-1.5">Finish the change</div>
-                  <div className="flex items-center gap-2 font-mono text-[12px] text-slate-100 bg-[#0d1117] border border-cyber-border/40 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2 font-mono text-[12px] text-slate-100 bg-[#22252B] border border-cyber-border/40 rounded-lg px-3 py-2">
                     <Terminal className="w-3.5 h-3.5 text-cyber-primary shrink-0" />
                     {result.result.needsInstall}
                   </div>

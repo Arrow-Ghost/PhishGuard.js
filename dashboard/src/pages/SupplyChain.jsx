@@ -113,7 +113,7 @@ export default function SupplyChain() {
               </div>
               <textarea value={pasteInput} onChange={e => setPasteInput(e.target.value)}
                 placeholder='{ "dependencies": { "lodash": "4.17.15" } }'
-                className="flex-1 bg-[#0d1117] text-slate-200 p-4 rounded-lg border border-cyber-border/30 outline-none resize-none font-mono text-xs" />
+                className="flex-1 bg-[#22252B] text-slate-200 p-4 rounded-lg border border-cyber-border/30 outline-none resize-none font-mono text-xs" />
             </div>
           )}
         </div>

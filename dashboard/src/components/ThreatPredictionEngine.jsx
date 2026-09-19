@@ -35,21 +35,21 @@ export default function ThreatPredictionEngine() {
         <div className="flex-1 relative">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.forecast} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-              <XAxis dataKey="day" stroke="#475569" fontSize={10} tickMargin={10} axisLine={false} tickLine={false} />
-              <YAxis stroke="#475569" fontSize={10} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#2E323A" vertical={false} />
+              <XAxis dataKey="day" stroke="#7C8592" fontSize={10} tickMargin={10} axisLine={false} tickLine={false} />
+              <YAxis stroke="#7C8592" fontSize={10} axisLine={false} tickLine={false} domain={[0, 100]} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '12px' }}
-                itemStyle={{ color: '#c084fc' }}
-                labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
+                contentStyle={{ backgroundColor: '#22252B', borderColor: '#5A626D', fontSize: '12px' }}
+                itemStyle={{ color: '#D9C7A6' }}
+                labelStyle={{ color: '#C0C6CF', marginBottom: '4px' }}
               />
               <Line
                 type="monotone"
                 dataKey="riskProbability"
-                stroke="#c084fc"
+                stroke="#D9C7A6"
                 strokeWidth={2}
-                dot={{ fill: '#c084fc', r: 3, strokeWidth: 0 }}
-                activeDot={{ r: 5, fill: '#fff', stroke: '#c084fc', strokeWidth: 2 }}
+                dot={{ fill: '#D9C7A6', r: 3, strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: '#fff', stroke: '#D9C7A6', strokeWidth: 2 }}
                 name="Projected risk %"
               />
             </LineChart>

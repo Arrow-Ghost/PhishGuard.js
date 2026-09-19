@@ -6,15 +6,15 @@ import {
 import { usePhishGuard } from '../App';
 
 const KIND = {
-  created:    { icon: GitBranch,    color: '#64748b', label: 'First release' },
-  advisory:   { icon: ShieldAlert,  color: '#f43f5e', label: 'Advisory' },
-  patched:    { icon: ShieldCheck,  color: '#10b981', label: 'Patched' },
-  installed:  { icon: PackageCheck, color: '#4f46e5', label: 'Your version' },
-  deprecated: { icon: Archive,      color: '#f59e0b', label: 'Deprecated' },
-  latest:     { icon: GitMerge,     color: '#38bdf8', label: 'Latest' },
+  created:    { icon: GitBranch,    color: '#A4ACB8', label: 'First release' },
+  advisory:   { icon: ShieldAlert,  color: '#E58585', label: 'Advisory' },
+  patched:    { icon: ShieldCheck,  color: '#7FD1A8', label: 'Patched' },
+  installed:  { icon: PackageCheck, color: '#A9C3DE', label: 'Your version' },
+  deprecated: { icon: Archive,      color: '#E2B36B', label: 'Deprecated' },
+  latest:     { icon: GitMerge,     color: '#86B4E6', label: 'Latest' },
 };
 
-const SEV_COLOR = { critical: '#f43f5e', high: '#fb923c', moderate: '#f59e0b', low: '#38bdf8' };
+const SEV_COLOR = { critical: '#E58585', high: '#E59A6A', moderate: '#E2B36B', low: '#86B4E6' };
 
 function fmt(d) {
   if (!d) return '—';
@@ -103,7 +103,7 @@ export default function DependencyEvolutionTimeline() {
             <span className="truncate">{selected || 'select package'}</span>
             {current && current.category !== 'safe' && (
               <span className="w-1.5 h-1.5 rounded-full shrink-0"
-                style={{ background: current.category === 'critical' ? '#f43f5e' : '#f59e0b' }} />
+                style={{ background: current.category === 'critical' ? '#E58585' : '#E2B36B' }} />
             )}
           </button>
 
@@ -124,7 +124,7 @@ export default function DependencyEvolutionTimeline() {
                     className={`w-full flex items-center gap-2 px-3 py-1.5 text-left hover:bg-slate-800/70 transition-colors ${
                       selected === p.name ? 'bg-cyber-primary/10' : ''}`}>
                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{
-                      background: p.category === 'critical' ? '#f43f5e' : p.category === 'warning' ? '#f59e0b' : '#10b981',
+                      background: p.category === 'critical' ? '#E58585' : p.category === 'warning' ? '#E2B36B' : '#7FD1A8',
                     }} />
                     <span className="font-mono text-[11px] text-slate-200 truncate">{p.name}</span>
                     <span className="font-mono text-[9px] text-slate-500 ml-auto shrink-0">{p.version}</span>
