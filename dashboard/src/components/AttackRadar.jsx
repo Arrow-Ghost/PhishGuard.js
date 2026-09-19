@@ -41,10 +41,10 @@ function classifyLog(log) {
   if (/dom|script|inject/.test(a)) return 'dom';
   // credential and secret-file reads (Node fsShield) sit with storage/cookie theft:
   // both mean "your credentials just left the process".
-  if (/storage|cookie|localstorage|sensitive path|fs.readfile/.test(a)) return 'storage';
+  if (/storage|cookie|localstorage|sensitive path|fs\.readfile/.test(a)) return 'storage';
   // child_process activity (Node processShield)
   if (/^process |child_process|exec(sync)?|spawn(sync)?|fork/.test(a)) return 'process';
-  if (/network|fetch|xhr|beacon|request|http./.test(a)) return 'network';
+  if (/network|fetch|xhr|beacon|request|http\./.test(a)) return 'network';
   return 'network';
 }
 
