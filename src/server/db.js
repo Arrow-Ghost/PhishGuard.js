@@ -127,7 +127,7 @@ async function init(db) {
   `);
   // Additive migration: older databases predate the enforcement columns.
   // SQLite has no "ADD COLUMN IF NOT EXISTS", so attempt and ignore duplicates.
-  for (const col of ['rule TEXT', 'enforcement TEXT', 'latency_ms REAL', 'stack_frames INTEGER']) {
+  for (const col of ['rule TEXT', 'enforcement TEXT', 'latency_ms REAL', 'stack_frames INTEGER', 'origin TEXT']) {
     try { await db.run(`ALTER TABLE security_logs ADD COLUMN ${col};`); }
     catch (err) { if (!/duplicate column/i.test(err.message)) throw err; }
   }
@@ -158,6 +158,18 @@ async function init(db) {
       scope       TEXT NOT NULL DEFAULT 'package',
       ignored_at  TEXT NOT NULL,
       released_at TEXT
+    );
+  `);
+
+  // `phishguard install`'s gate: a package's lifecycle scripts, once approved,
+  // don't need re-approval on every install - unless the script content itself
+  // changes, which is exactly the compromised-update signal worth re-flagging.
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS script_allowlist (
+      name         TEXT PRIMARY KEY,
+      version      TEXT,
+      script_hash  TEXT NOT NULL,
+      approved_at  TEXT NOT NULL
     );
   `);
 
@@ -372,19 +384,22 @@ function buildApi(db) {
         enforcement: log.enforcement || null,
         latency_ms: typeof log.latencyMs === 'number' ? log.latencyMs : null,
         stack_frames: typeof log.stackFrames === 'number' ? log.stackFrames : null,
+        // 'browser' / 'node' come from the runtime agents; everything else
+        // (remediation, quarantine, ignore/restore) is a system-generated log.
+        origin: log.origin || 'system',
       };
       await db.run(
-        `INSERT OR REPLACE INTO security_logs (id, timestamp, source_package, caller_url, action, details, status, severity, stack, rule, enforcement, latency_ms, stack_frames)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        `INSERT OR REPLACE INTO security_logs (id, timestamp, source_package, caller_url, action, details, status, severity, stack, rule, enforcement, latency_ms, stack_frames, origin)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [row.id, row.timestamp, row.source_package, row.caller_url, row.action, row.details, row.status, row.severity, row.stack,
-         row.rule, row.enforcement, row.latency_ms, row.stack_frames]
+         row.rule, row.enforcement, row.latency_ms, row.stack_frames, row.origin]
       );
       return {
         id: row.id, timestamp: row.timestamp, sourcePackage: row.source_package,
         callerUrl: row.caller_url, action: row.action, details: row.details,
         status: row.status, severity: row.severity, stack: row.stack,
         rule: row.rule, enforcement: row.enforcement,
-        latencyMs: row.latency_ms, stackFrames: row.stack_frames,
+        latencyMs: row.latency_ms, stackFrames: row.stack_frames, origin: row.origin,
       };
     },
 
@@ -396,6 +411,7 @@ function buildApi(db) {
         rule: r.rule || null, enforcement: r.enforcement || null,
         latencyMs: r.latency_ms != null ? r.latency_ms : null,
         stackFrames: r.stack_frames != null ? r.stack_frames : null,
+        origin: r.origin || 'system',
       }));
     },
 
@@ -411,6 +427,7 @@ function buildApi(db) {
         rule: r.rule || null, enforcement: r.enforcement || null,
         latencyMs: r.latency_ms != null ? r.latency_ms : null,
         stackFrames: r.stack_frames != null ? r.stack_frames : null,
+        origin: r.origin || 'system',
       }));
     },
 
@@ -455,6 +472,29 @@ function buildApi(db) {
         [new Date().toISOString(), name]);
     },
 
+    /* --------------------------- script allowlist -------------------------- */
+    getScriptAllowlist() {
+      return db.all(`SELECT * FROM script_allowlist`);
+    },
+
+    async getScriptApproval(name) {
+      return db.get(`SELECT * FROM script_allowlist WHERE name = ?`, [name]);
+    },
+
+    approveScript({ name, version, scriptHash }) {
+      return db.run(
+        `INSERT INTO script_allowlist (name, version, script_hash, approved_at)
+         VALUES (?,?,?,?)
+         ON CONFLICT(name) DO UPDATE SET
+           version = excluded.version, script_hash = excluded.script_hash, approved_at = excluded.approved_at`,
+        [name, version || null, scriptHash, new Date().toISOString()]
+      );
+    },
+
+    revokeScriptApproval(name) {
+      return db.run(`DELETE FROM script_allowlist WHERE name = ?`, [name]);
+    },
+
     /* ------------------------------ settings ----------------------------- */
     async getSetting(key, fallback = null) {
       const row = await db.get(`SELECT value FROM settings WHERE key = ?`, [key]);
@@ -493,7 +533,7 @@ function buildApi(db) {
 
     /* --------------------------- db explorer --------------------------- */
     async getStats() {
-      const tables = ['scans', 'scan_packages', 'scan_findings', 'posture_snapshots', 'security_logs', 'quarantine', 'ignored_packages', 'settings'];
+      const tables = ['scans', 'scan_packages', 'scan_findings', 'posture_snapshots', 'security_logs', 'quarantine', 'ignored_packages', 'script_allowlist', 'settings'];
       const counts = {};
       let total = 0;
       for (const t of tables) {
@@ -513,7 +553,7 @@ function buildApi(db) {
     },
 
     getTableRows(table, limit = 200) {
-      const allowed = ['scans', 'scan_packages', 'scan_findings', 'posture_snapshots', 'security_logs', 'quarantine', 'ignored_packages', 'settings'];
+      const allowed = ['scans', 'scan_packages', 'scan_findings', 'posture_snapshots', 'security_logs', 'quarantine', 'ignored_packages', 'script_allowlist', 'settings'];
       if (!allowed.includes(table)) return Promise.reject(new Error('Unknown or restricted table'));
       // `scans.report_json` is a ~200KB blob per row - selecting it here turned
       // a table preview into a 10MB response. Summarise it instead.

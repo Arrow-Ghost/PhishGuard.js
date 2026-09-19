@@ -197,6 +197,32 @@ async function cmdScan(flags) {
   return 0;
 }
 
+/* -------------------------------- install ------------------------------- */
+async function cmdInstall(flags, positionals) {
+  const { installGate } = require('../src/core/installGate');
+  const root = resolveTargetRoot(flags.cwd);
+  const config = loadConfig(root);
+
+  const db = require('../src/server/db').open(root);
+  await db.init();
+
+  let result;
+  try {
+    result = await installGate(root, {
+      passthroughArgs: positionals,
+      yes: flags.yes === true,
+      allow: typeof flags.allow === 'string' ? flags.allow.split(',').map(s => s.trim()).filter(Boolean) : [],
+      offline: flags.offline === true || config.offline,
+      db,
+      log: (...a) => console.log(...a),
+    });
+  } finally {
+    await db.close();
+  }
+
+  return result.exitCode;
+}
+
 /* ------------------------------ dashboard ----------------------------- */
 async function cmdDashboard(flags) {
   const { startServer } = require('../src/server/server');
@@ -251,6 +277,7 @@ function cmdInit(flags) {
   console.log('');
   console.log(c(C.bold, '  Next steps'));
   console.log(`    ${c(C.cyan, 'npx phishguard scan')}        one-off / CI dependency scan`);
+  console.log(`    ${c(C.cyan, 'npx phishguard install')}     install with lifecycle scripts gated behind approval`);
   console.log(`    ${c(C.cyan, 'npx phishguard dashboard')}   live SOC dashboard for this repo`);
   console.log('');
   console.log(c(C.grey, '  Optional runtime agent (browser apps): import at the top of your entry file,'));
@@ -270,6 +297,8 @@ function help() {
   ${c(C.bold, 'Commands')}
     scan          Scan this repo's dependencies against live OSV advisories,
                   typosquatting heuristics and npm deprecation flags.
+    install       Install dependencies with lifecycle scripts (preinstall/
+                  install/postinstall) gated behind an explicit approval.
     dashboard     Start the self-hosted SOC dashboard + telemetry hub for this repo.
     init          Create phishguard.config.json and print setup steps.
 
@@ -282,6 +311,15 @@ function help() {
     --no-save         Don't append this scan to .phishguard history.
     --no-codebase-map Skip scanning your source files for dependency usage.
     --cwd <dir>       Target a different project directory.
+
+  ${c(C.bold, 'install options')}
+    --yes             Non-interactive: skip any package whose script isn't
+                      already approved (fails CI the way --fail-on does).
+    --allow <names>   Comma-separated package names to approve without prompting.
+    --offline         Skip the registry reputation lookup (treats every
+                      flagged script as unestablished).
+    --cwd <dir>       Target a different project directory.
+    Any other args (e.g. a package name) pass straight through to npm install.
 
   ${c(C.bold, 'dashboard options')}
     --port <n>        HTTP/WebSocket port (default: 4173 or config).
@@ -305,6 +343,8 @@ function help() {
     if (cmd === 'scan') {
       // set exitCode (don't process.exit) so piped stdout flushes fully
       process.exitCode = await cmdScan(flags);
+    } else if (cmd === 'install') {
+      process.exitCode = await cmdInstall(flags, _.slice(1));
     } else if (cmd === 'dashboard' || cmd === 'dash') {
       await cmdDashboard(flags);
     } else if (cmd === 'init') {

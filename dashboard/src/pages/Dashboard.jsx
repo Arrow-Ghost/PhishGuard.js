@@ -54,6 +54,7 @@ export default function Dashboard() {
     { name: 'Low', value: c.low },
     { name: 'Deprecated', value: c.deprecated },
     { name: 'Typosquat', value: c.typosquat },
+    { name: 'Install scripts', value: c.lifecycleScripts },
   ] : [];
 
   return (

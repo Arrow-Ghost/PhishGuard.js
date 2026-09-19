@@ -57,10 +57,37 @@ What it checks per package:
 | Deprecation | the npm registry `deprecated` field for the installed version (or `dist-tags.latest`) |
 | Typosquatting | Levenshtein + Jaro-Winkler vs a bundled list of high-value packages, **gated** by a registry-reputation check so established packages aren't flagged |
 | Known-malicious names | bundled list |
+| Risky `preinstall`/`install`/`postinstall` scripts | npm registry packument for the resolved version, for direct/vulnerable/typosquat packages; full-tree coverage at `phishguard install` time (see below) |
 
 Lockfiles understood: `package-lock.json` (v1/v2/v3), `npm-shrinkwrap.json`,
 `yarn.lock`, `pnpm-lock.yaml`. With no lockfile it falls back to the manifest
 ranges (versions become best-effort and each package gets an `unresolved` note).
+
+### `phishguard install`
+
+Installs dependencies the way `npm install` would, except lifecycle scripts
+(`preinstall` / `install` / `postinstall`) don't run until they're approved.
+This is the check that would have caught event-stream, ua-parser-js and the
+node-ipc/chalk maintainer-account compromises — those attacks ran during
+install, before any static scan or runtime agent was in the picture.
+
+```bash
+phishguard install                   # install, gate lifecycle scripts behind a prompt
+phishguard install lodash            # args pass through to the underlying npm install
+phishguard install --yes             # CI mode: skip anything not already approved, exit 1 if it did
+phishguard install --allow husky,esbuild   # pre-approve specific packages without prompting
+```
+
+How it works: installs with `npm install --ignore-scripts` first (nothing
+executes yet), then reads every installed package's scripts straight off disk
+(full tree, no network calls needed to find them), checks npm registry
+reputation only for the packages that actually have a script, and classifies
+each one (obfuscation/exfiltration patterns are always critical; a recognised
+build-tooling script on an established package is auto-allowed; anything else
+is scored by package reputation). Approved packages get `npm rebuild <pkg>` to
+actually run their script. Approvals persist in `.phishguard/phishguard.db`
+and are invalidated if the script's content ever changes — a version bump
+alone doesn't require re-approval, but a changed script does.
 
 ### `phishguard dashboard`
 
@@ -125,6 +152,37 @@ primary control.
 
 ---
 
+## Optional: runtime agent (Node servers)
+
+The server-side counterpart: hooks `http`/`https`/`fetch`, `child_process`
+(`exec`/`execFile`/`spawn`/`fork` and their `*Sync` variants) and reads of a
+short sensitive-path list (`.env`, `.npmrc`, SSH keys, cloud credentials).
+Require it **first**, before anything else in your server's entrypoint:
+
+```js
+require('phishguard/agent/node');    // auto-installs; talks to http://localhost:4173 by default
+```
+
+```js
+// or configure it
+const { installAgent } = require('phishguard/agent/node');
+installAgent({ hubUrl: 'http://localhost:4173', blockDomains: ['evil.example'] });
+```
+
+Reports over plain HTTP POST (no persistent socket in your server process).
+Network calls to a blocked domain are denied outright, same as the browser
+agent. `child_process`/filesystem calls are only watched when triggered by
+dependency code (never your own app code), and are only **blocked** when they
+match a known exfiltration/obfuscation pattern — anything else from a
+dependency is flagged for visibility but allowed to run, since a blanket
+block on all subprocess/file activity would be far too disruptive.
+
+Same caveat as the browser agent: this is defence-in-depth telemetry, not a
+sandbox. Monkey-patched functions can be routed around by code that already
+holds a reference to the original binding before the agent installs.
+
+---
+
 ## Programmatic API
 
 ```js
@@ -164,6 +222,7 @@ src/core/                 scanner: resolve → lockfile → osv → registry →
 src/server/               Express + WebSocket hub, SQLite layer, REST API
 src/data/                 bundled popular-packages list + offline advisory fallback
 agent/                    browser runtime agent (fetch/XHR/DOM hooks)
+agent/node/               Node server runtime agent (http/child_process/fs hooks)
 dashboard/                React SOC UI (built to dashboard/dist, served by the hub)
 ```
 

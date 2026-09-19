@@ -8,6 +8,7 @@
  * `phishguard scan` is the primary control.
  */
 import { resolveAgentConfig } from './config.js';
+import { callerContext } from './stackContext.js';
 
 let installed = false;
 
@@ -41,6 +42,7 @@ export function installInterceptor(userConfig = {}) {
         (window.fetch.__pgOriginal || window.fetch)(`${config.httpUrl.replace(/\/$/, '')}/api/telemetry`, {
           method: 'POST', headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
+            origin: 'browser',
             sourcePackage: payload.callerContext, callerUrl: payload.target,
             action: payload.action, details: payload.details, status: payload.status,
             severity: payload.severity, stack: payload.stack,
@@ -48,20 +50,6 @@ export function installInterceptor(userConfig = {}) {
         }).catch(() => {});
       } catch {}
     }
-  }
-
-  function callerContext() {
-    try {
-      const lines = (new Error().stack || '').split('\n').slice(1);
-      for (const l of lines) {
-        if (l.includes('phishguard') || l.includes('interceptor.js') || l.includes('config.js')) continue;
-        const m = l.match(/(?:node_modules\/(?:\.pnpm\/)?((?:@[^/]+\/)?[^/@\s)]+))|\/((?:src|dist|assets)\/[^\s?):]+)/);
-        if (m) return (m[1] ? `node_modules/${m[1]}` : m[2]);
-        const u = l.match(/(https?:\/\/[^\s):]+)/);
-        if (u) return u[1];
-      }
-    } catch {}
-    return 'unknown';
   }
 
   function verdict(url) {
@@ -76,6 +64,7 @@ export function installInterceptor(userConfig = {}) {
     const stack = (new Error().stack || '');
     send({
       timestamp: new Date().toISOString(),
+      origin: 'browser',
       callerContext: callerContext(),
       action,
       target: url,

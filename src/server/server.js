@@ -95,6 +95,9 @@ async function startServer(opts = {}) {
           enforcement: p.enforcement,
           latencyMs: p.latencyMs,
           stackFrames: p.stackFrames,
+          // This WS ingestion path is only used by the browser agent (the
+          // Node agent reports over HTTP) - default accordingly.
+          origin: p.origin || 'browser',
         });
         broadcast('NEW_LOG', saved);
         if (opts.onLog) opts.onLog(saved);
@@ -255,7 +258,7 @@ async function startServer(opts = {}) {
   } catch { /* settings table is best-effort */ }
 
   app.use('/api', createApi({
-    db, config, broadcast, autoscan,
+    db, config, broadcast, autoscan, port,
     project: { name: (report && report.project.name) || path.basename(root), version: report && report.project.version, root },
     getReport: () => report,
     runScan,

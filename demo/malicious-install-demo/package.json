@@ -1,0 +1,9 @@
+{
+  "name": "malicious-install-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Throwaway fixture for demoing `phishguard install`'s script gate. Not a real project.",
+  "dependencies": {
+    "app-telemetry-lite": "file:./vendor/app-telemetry-lite"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node bin/phishguard.js scan --json --no-save)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(node -e ' *)",
+      "Read(//tmp/**)",
+      "Bash(rm -f .phishguard/cache/registry-*.json)",
+      "Bash(node bin/phishguard.js scan --no-save)",
+      "Read(//tmp/pg-install-test/**)",
+      "Bash(node /home/sarthak/sarthak/repos/PhishGuard.js/bin/phishguard.js install --yes)",
+      "Bash(echo \"EXIT:$?\")",
+      "Read(//tmp/pg-install-test/node_modules/esbuild/bin/**)",
+      "Read(//tmp/pg-install-test/node_modules/esbuild/**)"
+    ]
+  }
+}

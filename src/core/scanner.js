@@ -20,6 +20,8 @@ const { queryRegistry } = require('./registry');
 const { checkTyposquat } = require('./typosquat');
 const { mapCodebaseUsage } = require('./codebase');
 const { packageRisk, categoryFor, gradeFor, statusFor, computePosture } = require('./score');
+const { looksEstablished } = require('./reputation');
+const { classifyLifecycleScripts } = require('./lifecycle');
 
 let OFFLINE_MALICIOUS = [];
 let OFFLINE_DEPRECATED = {};
@@ -28,19 +30,6 @@ try {
   OFFLINE_MALICIOUS = db.knownMalicious || [];
   OFFLINE_DEPRECATED = db.deprecated || {};
 } catch { /* ignore */ }
-
-/**
- * A package whose name resembles a popular one is only a *typosquat suspect* if
- * it also looks freshly-minted / low-reputation. Established packages that
- * happen to be name-close (merge2, postcss-js, jsesc, ...) are not flagged.
- */
-function looksEstablished(reg) {
-  if (!reg || reg.unresolved) return false;
-  if (reg.versionsCount != null && reg.versionsCount >= 4) return true;
-  if (reg.daysSincePublish != null && reg.daysSincePublish >= 365) return true;
-  if (reg.maintainers != null && reg.maintainers >= 2 && (reg.versionsCount ?? 0) >= 2) return true;
-  return false;
-}
 
 function hashManifest(manifest) {
   const relevant = JSON.stringify({
@@ -134,6 +123,7 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource, codebase
     total: rawPackages.length, direct: 0, transitive: 0, dev: 0,
     vulnerable: 0, critical: 0, high: 0, moderate: 0, low: 0,
     warning: 0, deprecated: 0, typosquat: 0, malicious: 0, unresolved: 0,
+    lifecycleScripts: 0,
   };
 
   for (const pkg of rawPackages) {
@@ -200,6 +190,14 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource, codebase
       });
     }
 
+    // --- lifecycle scripts (preinstall/install/postinstall) ---
+    // Only covers packages already in `needsRegistry` (direct, vulnerable, or
+    // typosquat suspects) - full-tree coverage happens at `phishguard install`
+    // time, where paying for a registry call per package is justified.
+    for (const f of classifyLifecycleScripts({ scripts: regEntry.scripts, established: looksEstablished(regEntry) })) {
+      findings.push(f);
+    }
+
     // --- unresolved version (no lockfile) ---
     if (!pkg.resolved && pkg.version) {
       findings.push({
@@ -243,6 +241,7 @@ async function analyze({ root, manifest, lock, rawPackages, lockSource, codebase
     }
     if (findings.some(f => f.type === 'malicious')) counts.malicious++;
     if (findings.some(f => f.type === 'unresolved')) counts.unresolved++;
+    if (findings.some(f => f.type === 'lifecycle-script')) counts.lifecycleScripts++;
 
     const record = {
       name: pkg.name,

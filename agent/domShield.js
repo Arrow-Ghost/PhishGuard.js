@@ -76,6 +76,7 @@ export function installDomShield(userConfig = {}) {
 
     post({
       timestamp: new Date().toISOString(),
+      origin: 'browser',
       sourcePackage: 'DOM Shield',
       callerUrl: location.href,
       action, details, status, severity, rule, enforcement,
@@ -101,7 +102,7 @@ export function installDomShield(userConfig = {}) {
           const src = node.getAttribute && node.getAttribute('src');
           if (src && blocked.some(d => src.includes(d))) {
             post({
-              timestamp: new Date().toISOString(), sourcePackage: 'DOM Shield',
+              timestamp: new Date().toISOString(), origin: 'browser', sourcePackage: 'DOM Shield',
               callerUrl: location.href, action: 'Load Dynamic Script',
               details: `Source: ${src} — blocked before insertion`, status: 'BLOCKED', severity: 'critical',
               rule: `blocked-origin match "${blocked.find(d => src.includes(d))}"`,

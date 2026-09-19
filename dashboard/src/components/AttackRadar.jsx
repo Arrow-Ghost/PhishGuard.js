@@ -13,10 +13,11 @@ import { Radar } from 'lucide-react';
 
 const AXES = [
   { key: 'network', label: 'NETWORK EXFIL', angle: -90 },
-  { key: 'dom', label: 'DOM INJECT', angle: -18 },
-  { key: 'storage', label: 'CREDENTIALS', angle: 54 },
-  { key: 'supply', label: 'SUPPLY CHAIN', angle: 126 },
-  { key: 'cve', label: 'KNOWN CVE', angle: 198 },
+  { key: 'dom', label: 'DOM INJECT', angle: -30 },
+  { key: 'storage', label: 'CREDENTIALS', angle: 30 },
+  { key: 'process', label: 'PROCESS EXEC', angle: 90 },
+  { key: 'supply', label: 'SUPPLY CHAIN', angle: 150 },
+  { key: 'cve', label: 'KNOWN CVE', angle: 210 },
 ];
 
 const SEV_RADIUS = { critical: 0.92, high: 0.72, moderate: 0.52, warning: 0.52, low: 0.34, info: 0.28 };
@@ -25,14 +26,18 @@ const SEV_COLOR = { critical: '#f43f5e', high: '#fb923c', moderate: '#f59e0b', w
 function classifyLog(log) {
   const a = `${log.action || ''} ${log.details || ''}`.toLowerCase();
   if (/dom|script|inject/.test(a)) return 'dom';
-  if (/storage|cookie|localstorage/.test(a)) return 'storage';
-  if (/network|fetch|xhr|beacon|request/.test(a)) return 'network';
+  // credential/secret-file reads (Node fsShield) belong with browser storage/
+  // cookie theft - both are "your credentials just left the process" events.
+  if (/storage|cookie|localstorage|sensitive path|fs\.readfile/.test(a)) return 'storage';
+  // child_process activity (Node processShield) - exec/execSync/spawn/spawnSync/fork
+  if (/^process |child_process|\bexec(sync)?\b|\bspawn(sync)?\b|\bfork\b/.test(a)) return 'process';
+  if (/network|fetch|xhr|beacon|request|http\./.test(a)) return 'network';
   return 'network';
 }
 
 function classifyFinding(f) {
   if (f.type === 'malicious' || f.type === 'typosquat') return 'supply';
-  if (f.type === 'deprecated') return 'supply';
+  if (f.type === 'deprecated' || f.type === 'lifecycle-script') return 'supply';
   return 'cve';
 }
 
@@ -84,7 +89,7 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
       const axis = AXES.find(a => a.key === key) || AXES[0];
       // deterministic jitter inside the 72° sector so repeat items don't stack
       const h = [...String(seed)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
-      const spread = ((h % 1000) / 1000 - 0.5) * 52;       // ±26°
+      const spread = ((h % 1000) / 1000 - 0.5) * 42;       // ±21° (sectors are 60° wide now, 6 axes)
       const wob = ((h >> 10) % 100) / 100 * 0.1 - 0.05;
       const rad = ((axis.angle + spread) * Math.PI) / 180;
       const dist = Math.max(0.18, Math.min(0.95, (SEV_RADIUS[severity] ?? 0.4) + wob));
@@ -186,7 +191,7 @@ export default function AttackRadar({ logs = [], advisories = [] }) {
 
           {/* sector dividers + axis labels */}
           {AXES.map(axis => {
-            const div = ((axis.angle + 36) * Math.PI) / 180;
+            const div = ((axis.angle + 30) * Math.PI) / 180; // half of the 60° axis spacing
             const lab = (axis.angle * Math.PI) / 180;
             const lx = 50 + Math.cos(lab) * 53;
             const ly = 50 + Math.sin(lab) * 53;

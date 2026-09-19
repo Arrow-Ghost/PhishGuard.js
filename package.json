@@ -21,6 +21,7 @@
   "exports": {
     ".": "./src/index.js",
     "./agent": "./agent/index.js",
+    "./agent/node": "./agent/node/index.js",
     "./package.json": "./package.json"
   },
   "bin": {

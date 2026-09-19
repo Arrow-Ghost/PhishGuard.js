@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import {
   Terminal as TermIcon, ShieldAlert, Code, Network, Database, Flame, PackageX,
   Crosshair, Target, Layers, ExternalLink, Wrench, CircleSlash, Search, Zap,
-  ChevronRight, Activity, Eye, Bug,
+  ChevronRight, Activity, Eye, Bug, Server,
 } from 'lucide-react';
 import { usePhishGuard } from '../App';
 import AttackTree from '../components/AttackTree';
@@ -15,7 +15,7 @@ const SEV = {
   warning:  { chip: 'bg-cyber-warning/15 text-cyber-warning border-cyber-warning/40', dot: '#f59e0b', ring: 'border-cyber-warning/40 hover:border-cyber-warning' },
 };
 
-const KIND_ICON = { vulnerability: Bug, malicious: PackageX, typosquat: Target, deprecated: Layers };
+const KIND_ICON = { vulnerability: Bug, malicious: PackageX, typosquat: Target, deprecated: Layers, 'lifecycle-script': Wrench };
 
 const CIA = {
   high:   { label: 'HIGH',   cls: 'text-cyber-danger',  w: '100%', color: '#f43f5e' },
@@ -293,7 +293,7 @@ export default function Sandbox() {
         // If appendChild did not throw, the MutationObserver path handles it and
         // the hub reports the outcome. No guess is printed here.
       } catch { /* appendChild guard threw - the agent already reported it */ }
-    } else {
+    } else if (demo.kind === 'storage') {
       try {
         window.localStorage.setItem('pg_cached_tz', '{"tz":"America/New_York"}');
         pushLines([{ phase: 'OBSERVE', tone: 'flag',
@@ -301,6 +301,20 @@ export default function Sandbox() {
       } catch (e) {
         pushLines([{ phase: 'ERROR', tone: 'escaped', text: e.message }]);
       }
+    } else if (demo.kind.startsWith('node-')) {
+      // The Node runtime agent lives in a server process, not this page - fire
+      // the demo in a disposable, dependency-attributed Node child process on
+      // the hub side. The real enforcement chain (or lack of one) arrives over
+      // the WebSocket the same way any other agent telemetry does.
+      const vector = demo.kind.slice('node-'.length);
+      fetch('/api/sandbox/node-demo', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ vector }),
+      })
+        .then(res => res.json())
+        .then(() => pushLines([{ phase: 'DISPATCHED', tone: 'attack',
+          text: 'fired in a sandboxed Node process attributed to a dependency — enforcement chain arrives over the WebSocket' }]))
+        .catch(e => pushLines([{ phase: 'ERROR', tone: 'escaped', text: e.message }]));
     }
   };
 
@@ -401,7 +415,12 @@ export default function Sandbox() {
                 d.severity === 'critical'
                   ? 'border-cyber-danger/40 text-cyber-danger hover:bg-cyber-danger/10'
                   : 'border-cyber-warning/40 text-cyber-warning hover:bg-cyber-warning/10'}`}>
-              {d.kind === 'network' ? <Network className="w-3 h-3" /> : d.kind === 'dom' ? <Code className="w-3 h-3" /> : <Database className="w-3 h-3" />}
+              {d.kind === 'network' ? <Network className="w-3 h-3" />
+                : d.kind === 'dom' ? <Code className="w-3 h-3" />
+                : d.kind === 'node-network' ? <Server className="w-3 h-3" />
+                : d.kind === 'node-process' ? <TermIcon className="w-3 h-3" />
+                : d.kind === 'node-fs' ? <Database className="w-3 h-3" />
+                : <Database className="w-3 h-3" />}
               {d.label}
             </button>
           ))}

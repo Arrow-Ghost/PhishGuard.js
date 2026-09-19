@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { requestJson, pool } = require('./http');
 const cache = require('./cache');
+const { extractLifecycleScripts } = require('./lifecycle');
 
 const REGISTRY = 'https://registry.npmjs.org';
 const OFFLINE_DB = path.join(__dirname, '..', 'data', 'offline-advisories.json');
@@ -55,6 +56,7 @@ function summarise(packument, installedVersion) {
     daysSincePublish,
     license: (latestMeta && latestMeta.license) || packument.license || null,
     homepage: packument.homepage || null,
+    scripts: extractLifecycleScripts(vMeta && vMeta.scripts),
     unresolved: false,
   };
 }

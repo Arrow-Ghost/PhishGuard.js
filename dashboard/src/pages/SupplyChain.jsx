@@ -98,6 +98,7 @@ export default function SupplyChain() {
                   <Stat label="Critical + High" value={report.counts.critical + report.counts.high} tone={(report.counts.critical + report.counts.high) ? 'danger' : 'ok'} />
                   <Stat label="Deprecated" value={report.counts.deprecated} tone={report.counts.deprecated ? 'warn' : 'ok'} />
                   <Stat label="Typosquat" value={report.counts.typosquat} tone={report.counts.typosquat ? 'danger' : 'ok'} />
+                  <Stat label="Install scripts" value={report.counts.lifecycleScripts} tone={report.counts.lifecycleScripts ? 'warn' : 'ok'} />
                 </div>
               )}
             </div>

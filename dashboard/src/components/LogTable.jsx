@@ -11,32 +11,39 @@ import {
   FilterX,
   Play,
   Cpu,
-  Sparkles
+  Sparkles,
+  Globe,
+  Server,
+  Settings
 } from 'lucide-react';
 import ReplayPlayer from './ReplayPlayer';
 
 export default function LogTable({ logs }) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [originFilter, setOriginFilter] = useState('ALL');
   const [selectedLog, setSelectedLog] = useState(null);
   const [replayLog, setReplayLog] = useState(null);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  // Filter logs based on search string and status selection
+  // Filter logs based on search string, status selection and origin
   const filteredLogs = logs.filter(log => {
-    const matchesSearch = 
+    const matchesSearch =
       log.sourcePackage.toLowerCase().includes(search.toLowerCase()) ||
       log.action.toLowerCase().includes(search.toLowerCase()) ||
       log.details.toLowerCase().includes(search.toLowerCase());
-      
-    const matchesStatus = 
-      statusFilter === 'ALL' || 
+
+    const matchesStatus =
+      statusFilter === 'ALL' ||
       log.status === statusFilter ||
       (statusFilter === 'WARNINGS' && log.severity === 'warning') ||
       (statusFilter === 'CRITICAL' && log.severity === 'critical');
 
-    return matchesSearch && matchesStatus;
+    const matchesOrigin =
+      originFilter === 'ALL' || (log.origin || 'system').toUpperCase() === originFilter;
+
+    return matchesSearch && matchesStatus && matchesOrigin;
   });
 
   const getSeverityColor = (sev) => {
@@ -49,10 +56,17 @@ export default function LogTable({ logs }) {
   };
 
   const getStatusColor = (status) => {
-    return status === 'BLOCKED' 
-      ? 'text-cyber-danger border-cyber-danger/35 bg-cyber-danger/10 glow-text-danger' 
+    return status === 'BLOCKED'
+      ? 'text-cyber-danger border-cyber-danger/35 bg-cyber-danger/10 glow-text-danger'
       : 'text-cyber-success border-cyber-success/35 bg-cyber-success/10 glow-text-success';
   };
+
+  const ORIGIN_META = {
+    browser: { label: 'BROWSER', icon: Globe, cls: 'text-sky-400 border-sky-500/30 bg-sky-500/10' },
+    node: { label: 'NODE', icon: Server, cls: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10' },
+    system: { label: 'SYSTEM', icon: Settings, cls: 'text-slate-400 border-slate-600/30 bg-slate-600/10' },
+  };
+  const originMeta = (origin) => ORIGIN_META[origin] || ORIGIN_META.system;
 
   return (
     <div className="flex gap-6 h-full items-stretch">
@@ -70,7 +84,7 @@ export default function LogTable({ logs }) {
                 Telemetry Log Stream
               </h2>
               <p className="text-[11px] text-slate-400">
-                Real-time interceptor logs capturing browser-scope network and storage actions
+                Real-time interceptor logs from the browser and Node runtime agents
               </p>
             </div>
           </div>
@@ -104,6 +118,23 @@ export default function LogTable({ logs }) {
                 </button>
               ))}
             </div>
+
+            {/* Origin filter */}
+            <div className="flex border border-cyber-border/45 rounded-lg p-0.5 bg-cyber-bg/50">
+              {['ALL', 'BROWSER', 'NODE', 'SYSTEM'].map(o => (
+                <button
+                  key={o}
+                  onClick={() => setOriginFilter(o)}
+                  className={`px-3 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase transition-all ${
+                    originFilter === o
+                      ? 'bg-slate-800 text-slate-100 border border-slate-700 shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {o}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -120,6 +151,7 @@ export default function LogTable({ logs }) {
               <thead>
                 <tr className="border-b border-cyber-border/40 bg-cyber-panel/60 sticky top-0 z-10">
                   <th className="p-4 text-[10px] font-mono font-bold text-cyber-muted tracking-wider uppercase">Timestamp</th>
+                  <th className="p-4 text-[10px] font-mono font-bold text-cyber-muted tracking-wider uppercase">Origin</th>
                   <th className="p-4 text-[10px] font-mono font-bold text-cyber-muted tracking-wider uppercase">Caller Context</th>
                   <th className="p-4 text-[10px] font-mono font-bold text-cyber-muted tracking-wider uppercase">Action / Event</th>
                   <th className="p-4 text-[10px] font-mono font-bold text-cyber-muted tracking-wider uppercase">Telemetry Severity</th>
@@ -142,6 +174,18 @@ export default function LogTable({ logs }) {
                   >
                     <td className="p-4 text-cyber-muted select-none">
                       {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </td>
+                    <td className="p-4">
+                      {(() => {
+                        const meta = originMeta(log.origin);
+                        const OriginIcon = meta.icon;
+                        return (
+                          <span className={`px-2 py-0.5 rounded border text-[9px] font-bold tracking-widest uppercase inline-flex items-center gap-1 ${meta.cls}`}>
+                            <OriginIcon className="w-3 h-3" />
+                            {meta.label}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="p-4 font-semibold text-slate-200">
                       <span className="px-2 py-1 rounded bg-cyber-panel border border-cyber-border/30 max-w-[150px] inline-block truncate" title={log.sourcePackage}>
@@ -217,6 +261,13 @@ export default function LogTable({ logs }) {
 
           <div className="flex-1 overflow-y-auto space-y-4 font-mono text-xs">
             {/* Basic parameters */}
+            <div>
+              <div className="text-[10px] text-cyber-muted uppercase tracking-widest mb-1">Runtime Origin</div>
+              <div className="p-2.5 bg-cyber-bg border border-cyber-border/30 rounded text-slate-200 font-bold select-all">
+                {originMeta(selectedLog.origin).label}
+              </div>
+            </div>
+
             <div>
               <div className="text-[10px] text-cyber-muted uppercase tracking-widest mb-1">Origin Package</div>
               <div className="p-2.5 bg-cyber-bg border border-cyber-border/30 rounded text-slate-200 font-bold select-all break-all">

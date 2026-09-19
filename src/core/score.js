@@ -26,6 +26,10 @@ const FINDING_WEIGHT = {
   'vuln-low': 16,
   deprecated: 30,
   unresolved: 8,
+  'lifecycle-critical': 88,
+  'lifecycle-high': 50,
+  'lifecycle-moderate': 24,
+  'lifecycle-low': 8,
 };
 
 function weightForFinding(f) {
@@ -36,6 +40,7 @@ function weightForFinding(f) {
   if (f.type === 'vulnerability') return FINDING_WEIGHT[`vuln-${f.severity}`] ?? FINDING_WEIGHT['vuln-moderate'];
   if (f.type === 'deprecated') return FINDING_WEIGHT.deprecated;
   if (f.type === 'unresolved') return FINDING_WEIGHT.unresolved;
+  if (f.type === 'lifecycle-script') return FINDING_WEIGHT[`lifecycle-${f.severity}`] ?? FINDING_WEIGHT['lifecycle-moderate'];
   return 10;
 }
 
@@ -185,6 +190,8 @@ function bandExploitability(packages, kevSet, remediated, ignored) {
   return { score: decayTo(penalty, 40), penalty: Math.round(penalty), evidence, kevHits };
 }
 
+const LIFECYCLE_PENALTY = { critical: 40, high: 20, moderate: 8, low: 2 };
+
 function bandSupplyChain(packages, counts, lockfilePresent) {
   let penalty = 0;
   const evidence = [];
@@ -194,12 +201,25 @@ function bandSupplyChain(packages, counts, lockfilePresent) {
   penalty += malicious * 60;
   penalty += typo * 22;
   penalty += Math.min(unresolved, 25) * 0.8;
+
+  let lifecycleFlagged = 0;
+  let lifecycleCritical = 0;
+  for (const p of packages) {
+    const scripts = p.findings.filter(f => f.type === 'lifecycle-script');
+    if (!scripts.length) continue;
+    lifecycleFlagged++;
+    if (scripts.some(f => f.severity === 'critical')) lifecycleCritical++;
+    for (const f of scripts) penalty += LIFECYCLE_PENALTY[f.severity] ?? LIFECYCLE_PENALTY.moderate;
+  }
+
   if (!lockfilePresent) { penalty += 25; evidence.push({ tone: 'bad', text: 'No lockfile - installs are not reproducible' }); }
   else evidence.push({ tone: 'good', text: 'Lockfile present - versions pinned' });
   if (malicious) evidence.push({ tone: 'bad', text: `${malicious} known-malicious package(s)` });
   if (typo) evidence.push({ tone: 'bad', text: `${typo} typosquat suspect(s)` });
   if (unresolved) evidence.push({ tone: 'warn', text: `${unresolved} package(s) without a pinned version` });
-  if (!malicious && !typo) evidence.push({ tone: 'good', text: 'No malware or name-confusion signals' });
+  if (lifecycleCritical) evidence.push({ tone: 'bad', text: `${lifecycleCritical} package(s) with a suspicious install script` });
+  else if (lifecycleFlagged) evidence.push({ tone: 'warn', text: `${lifecycleFlagged} package(s) with a flagged install script` });
+  if (!malicious && !typo && !lifecycleFlagged) evidence.push({ tone: 'good', text: 'No malware, name-confusion or install-script signals' });
   return { score: decayTo(penalty, 38), penalty: Math.round(penalty), evidence };
 }
 
